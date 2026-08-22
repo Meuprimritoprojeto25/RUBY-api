@@ -21,11 +21,22 @@ class MercadoPulseApp < Sinatra::Base
     set :bind, ENV.fetch("BIND", "0.0.0.0")
     set :port, Integer(ENV.fetch("PORT", "4567"))
     set :environment, ENV.fetch("RACK_ENV", "development").to_sym
-    set :session_secret, ENV.fetch(
+    session_secret = ENV.fetch(
       "SESSION_SECRET",
       "mercado-pulse-local-session-secret-change-this-in-production-2025"
     )
-    enable :sessions
+    set :session_secret, session_secret
+
+    # Passing the cookie options directly to Sinatra is important here.  A
+    # boolean `sessions` setting leaves the cookie middleware configuration to
+    # framework defaults, which can result in a new session for the form POST
+    # behind a preview proxy.  The cart and its CSRF token must use the same
+    # signed browser session on the page render and on the add-to-cart POST.
+    set :sessions,
+        key: "mercado_pulse.session",
+        secret: session_secret,
+        same_site: :lax,
+        httponly: true
   end
 
   database_url = ENV.fetch("DATABASE_URL", "sqlite://#{File.join(settings.root, 'db', 'mercado_pulse.sqlite3')}")
