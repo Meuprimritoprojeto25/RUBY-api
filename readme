@@ -25,16 +25,17 @@ Abra `http://localhost:9292`. A rota `/` é a vitrine principal, preparada para 
 visual responsiva. A API de leitura está disponível em `GET /api/listings`.
 
 O `Procfile` inicia o Puma com `config/puma.rb`, que usa `PORT` quando ela for
-fornecida pelo ambiente de publicação e faz bind em `0.0.0.0`. A aplicação fixa
-explicitamente Sinatra 3.2.0, Rack 2.2.10 e Rack Protection 3.2.0 no `Gemfile`
-e no lockfile. O `base64` 0.2.0 também é declarado diretamente: ele é usado
-pela sessão de cookie e torna a resolução compatível com o Bundler 2.3 mesmo
-quando o índice compacto retorna metadados adicionais de `rack-session`. Essa
-linha estável do Rack já fornece o executável `rackup`, portanto plataformas
-que iniciam um `config.ru` com
-`bundle exec rackup` e plataformas que usam o `Procfile` encontram o mesmo
-runtime sem depender dos metadados inconsistentes das gems auxiliares do Rack
-3/Sinatra 4 no Bundler 2.3 do preview.
+fornecida pelo ambiente de publicação e faz bind em `0.0.0.0`. A camada HTTP é
+implementada diretamente sobre o Rack 2.2.10 e o `config.ru` monta a sessão de
+cookie e os arquivos públicos antes da aplicação. O Rack 2 já fornece o
+executável `rackup`, portanto tanto plataformas que iniciam um `config.ru`
+quanto plataformas que usam o `Procfile` encontram o mesmo runtime.
+
+Essa escolha elimina Sinatra e Rack Protection do bundle. O preview utiliza
+Bundler 2.3 com um índice compacto que retornou metadados incompatíveis para
+essas duas gems, interrompendo `bundle install` antes de o servidor iniciar.
+As rotas, templates ERB, autenticação, carrinho, checkout e persistência foram
+preservados no adaptador Rack, sem substituir a aplicação por conteúdo estático.
 
 Na primeira inicialização, a aplicação cria automaticamente o banco SQLite em
 `db/marketplace.sqlite3`, executa as migrações e, com `DASHBOARDIA_DEMO_MODE=true`, cria
@@ -65,8 +66,7 @@ bundle exec ruby db/seed.rb
 | `AUTO_MIGRATE` | Executa migrações na inicialização | `true` |
 
 O valor de `SESSION_SECRET` é derivado com SHA-512 e passado diretamente ao
-`Rack::Session::Cookie`; a aplicação não usa a configuração implícita de sessão
-do Sinatra. A derivação hexadecimal produz 128 bytes e aceita com segurança
+`Rack::Session::Cookie`. A derivação hexadecimal produz 128 bytes e aceita com segurança
 previews sem essa variável ou com um valor legado curto. Em produção, configure
 uma variável exclusiva, longa e aleatória.
 

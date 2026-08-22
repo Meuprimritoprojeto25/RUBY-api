@@ -39,7 +39,7 @@
     <% if @flash %>
       <div class="wrap flash flash--<%= h(@flash[:type]) %>" role="status"><%= h(@flash[:message]) %></div>
     <% end %>
-    <main><%= yield %></main>
+    <main><%= @view_content %></main>
     <footer>
       <div class="wrap footer-grid">
         <div><strong>Vitrine Livre</strong><p>Um marketplace simples para comprar e vender com confiança.</p></div>
