@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "sinatra/base"
+require "digest"
 require "json"
 
 class MarketplaceApp < Sinatra::Base
@@ -9,7 +10,13 @@ class MarketplaceApp < Sinatra::Base
     set :views, File.join(APP_ROOT, "app", "views")
     set :public_folder, File.join(APP_ROOT, "public")
     enable :sessions
-    set :session_secret, ENV.fetch("SESSION_SECRET", "local-development-session-secret-change-me-please")
+    # Rack 3 requires cookie-session secrets to be at least 64 bytes. Hashing
+    # the configured value provides a fixed 128-byte secret even when a local
+    # or preview environment does not provide SESSION_SECRET (or provides a
+    # short legacy value), preventing requests from failing during middleware
+    # initialization.
+    session_secret_source = ENV.fetch("SESSION_SECRET", "local-development-session-secret-change-me-please")
+    set :session_secret, Digest::SHA512.hexdigest(session_secret_source)
   end
 
   use Rack::MethodOverride
