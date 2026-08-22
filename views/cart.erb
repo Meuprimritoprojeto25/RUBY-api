@@ -1,0 +1,10 @@
+<% @title = "Seu carrinho" %>
+<section class="shell cart-page">
+  <div class="breadcrumbs"><a href="/">Início</a><span>›</span><b>Carrinho</b></div>
+  <h1>Seu carrinho <small>(<%= @items.sum { |item| item[:quantity] } %> itens)</small></h1>
+  <% if @items.empty? %>
+    <div class="empty-state cart-empty"><span>🛒</span><h2>Seu carrinho está esperando por você</h2><p>Encontre produtos incríveis e adicione-os aqui.</p><a class="button button-blue" href="/produtos">Continuar comprando</a></div>
+  <% else %>
+    <div class="cart-layout"><div class="cart-items"><% @items.each do |item| %><article class="cart-item"><a href="/produtos/<%= h(item[:slug]) %>"><img src="<%= h(item[:image_url]) %>" alt="<%= h(item[:title]) %>"></a><div><a class="cart-product-name" href="/produtos/<%= h(item[:slug]) %>"><%= h(item[:title]) %></a><span class="free-shipping">Frete grátis</span><form action="/carrinho/atualizar/<%= item[:id] %>" method="post" class="quantity-form"><%= csrf_field %><label>Quantidade <select name="quantity" onchange="this.form.submit()"><% (1..[item[:stock], 5].min).each { |quantity| %><option value="<%= quantity %>" <%= "selected" if quantity == item[:quantity] %>><%= quantity %></option><% } %></select></label></form></div><div class="cart-price"><strong><%= money(item[:line_total_cents]) %></strong><form action="/carrinho/remover/<%= item[:id] %>" method="post"><%= csrf_field %><button type="submit">Remover</button></form></div></article><% end %></div><aside class="order-summary"><h2>Resumo da compra</h2><p><span>Produtos</span><b><%= money(cart_total) %></b></p><p><span>Frete</span><em>Grátis</em></p><hr><p class="summary-total"><span>Total</span><b><%= money(cart_total) %></b></p><small>em até 10x sem juros</small><a class="button button-blue" href="/checkout">Continuar a compra</a><a class="continue-link" href="/produtos">← Continuar comprando</a></aside></div>
+  <% end %>
+</section>

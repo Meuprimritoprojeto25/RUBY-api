@@ -1,0 +1,58 @@
+<% @title = "Tudo para sua vida" %>
+<section class="hero">
+  <div class="shell hero-inner">
+    <div class="hero-copy">
+      <span class="eyebrow">SEMANA PULSE</span>
+      <h1>Ofertas que <span>movem</span> seu dia.</h1>
+      <p>Escolhas incríveis, preços que você vai amar e entrega para todo o Brasil.</p>
+      <a href="/produtos?ordenar=menor-preco" class="button button-dark">Ver ofertas <span>→</span></a>
+      <div class="hero-pills"><span>✓ Compra protegida</span><span>✓ Frete grátis a partir de R$ 79</span></div>
+    </div>
+    <div class="hero-visual" aria-label="Produtos em destaque">
+      <div class="hero-orbit orbit-one"></div><div class="hero-orbit orbit-two"></div>
+      <div class="floating-tag tag-top">Até <b>30% OFF</b></div>
+      <div class="hero-product hero-watch">⌚</div>
+      <div class="hero-product hero-headphones">🎧</div>
+      <div class="hero-product hero-shoe">👟</div>
+      <div class="floating-tag tag-bottom">Frete <b>GRÁTIS</b></div>
+    </div>
+  </div>
+</section>
+
+<section class="trust-strip">
+  <div class="shell trust-grid">
+    <div><span>▣</span><p><b>Pague como quiser</b><small>Cartão, Pix e boleto</small></p></div>
+    <div><span>♙</span><p><b>Frete grátis</b><small>Em milhões de produtos</small></p></div>
+    <div><span>◈</span><p><b>Compra protegida</b><small>Do clique à entrega</small></p></div>
+    <div><span>↩</span><p><b>Devolução fácil</b><small>Você tem 30 dias</small></p></div>
+  </div>
+</section>
+
+<section class="shell section categories-section">
+  <div class="section-heading"><div><span class="overline">EXPLORE POR CATEGORIA</span><h2>Encontre o que combina com você</h2></div><a href="/produtos">Ver tudo <span>→</span></a></div>
+  <div class="category-grid">
+    <% @categories.each do |category| %>
+      <a class="category-card category-<%= h(category[:slug]) %>" href="/produtos?categoria=<%= h(category[:slug]) %>">
+        <span class="category-icon"><%= category_icon(category) %></span>
+        <span><%= h(category[:name]) %></span><b>→</b>
+      </a>
+    <% end %>
+  </div>
+</section>
+
+<section class="shell section">
+  <div class="section-heading"><div><span class="overline">SELECIONADOS PARA VOCÊ</span><h2>Produtos que estão em alta</h2></div><a href="/produtos">Ver mais produtos <span>→</span></a></div>
+  <div class="product-grid">
+    <% @featured.each do |product| %><%= product_card(product) %><% end %>
+  </div>
+</section>
+
+<section class="shell pulse-banner">
+  <div class="banner-text"><span class="overline">LOJAS OFICIAIS</span><h2>Suas marcas favoritas,<br>no mesmo lugar.</h2><p>Produtos originais e ofertas especiais direto de quem entende.</p><a class="text-link" href="/produtos">Conhecer lojas →</a></div>
+  <div class="logo-cloud"><span>SONORA</span><span>nord</span><span>URBAN</span><span>CASA</span><span>VIVA</span><span>form.</span></div>
+</section>
+
+<section class="shell section deals-section">
+  <div class="section-heading"><div><span class="overline">APROVEITE AGORA</span><h2>Ofertas relâmpago</h2></div><div class="countdown">Termina em <b data-countdown>02:14:38</b></div></div>
+  <div class="product-grid deals-grid"><% @deals.each do |product| %><%= product_card(product) %><% end %></div>
+</section>
