@@ -1,0 +1,17 @@
+<section class="auth-page">
+  <div class="auth-card">
+    <a class="brand auth-brand" href="/"><span class="brand-mark">v</span><span>mercado<span>viva</span></span></a>
+    <p class="eyebrow">Sua conta começa aqui</p>
+    <h1>Crie sua conta</h1>
+    <p class="auth-intro">Salve favoritos, acompanhe pedidos e publique seus produtos quando quiser.</p>
+    <% if @user.errors.any? %><div class="form-errors"><%= @user.errors.full_messages.join(". ") %></div><% end %>
+    <form class="form-stack" action="/cadastro" method="post">
+      <label>Nome de usuário<input name="username" value="<%= escape_html(@user.username.to_s) %>" required minlength="3" maxlength="30" autocomplete="username"></label>
+      <label>E-mail<input type="email" name="email" value="<%= escape_html(@user.email.to_s) %>" required autocomplete="email"></label>
+      <label>Senha<input type="password" name="password" required minlength="6" autocomplete="new-password"></label>
+      <label>Confirme sua senha<input type="password" name="password_confirmation" required minlength="6" autocomplete="new-password"></label>
+      <button class="button button-primary button-wide" type="submit">Criar minha conta</button>
+    </form>
+    <p class="auth-switch">Já tem uma conta? <a href="/entrar">Entre agora</a></p>
+  </div>
+</section>

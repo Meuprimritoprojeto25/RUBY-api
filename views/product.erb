@@ -1,0 +1,22 @@
+<section class="shell product-page">
+  <div class="breadcrumb"><a href="/">Início</a><span>/</span><a href="/produtos?categoria=<%= @product.category.slug %>"><%= escape_html(@product.category.name) %></a><span>/</span><strong><%= escape_html(@product.title) %></strong></div>
+  <div class="product-detail">
+    <div class="product-gallery"><img src="<%= escape_html(product_image(@product)) %>" alt="<%= escape_html(@product.title) %>"></div>
+    <section class="purchase-panel">
+      <p class="product-category"><%= escape_html(@product.category.name) %> · Novo</p>
+      <h1><%= escape_html(@product.title) %></h1>
+      <div class="detail-price"><strong><%= money(@product.price_cents) %></strong><span>em até 10x sem juros</span></div>
+      <p class="stock"><span>●</span> <%= @product.stock %> unidade(s) disponível(is)</p>
+      <form action="/carrinho/<%= @product.slug %>" method="post"><button class="button button-primary button-wide" type="submit">Adicionar ao carrinho</button></form>
+      <form action="/favoritos/<%= @product.slug %>" method="post"><button class="button button-outline button-wide" type="submit">♡ Salvar nos favoritos</button></form>
+      <div class="purchase-assurances"><p>♢ <span><strong>Compra protegida</strong><br>Receba o produto ou devolvemos seu dinheiro.</span></p><p>▣ <span><strong>Envio seguro</strong><br>Acompanhe cada etapa da entrega.</span></p></div>
+    </section>
+  </div>
+  <div class="product-info-grid">
+    <section class="description"><h2>Sobre este produto</h2><p><%= escape_html(@product.description) %></p></section>
+    <aside class="seller-box"><p>Vendido por</p><h3><%= escape_html(@product.seller.username) %></h3><span class="seller-rating">★ 4,9 · Vendedor verificado</span><p class="seller-meta">Responde rápido · Venda protegida</p></aside>
+  </div>
+  <% if @related_products.any? %>
+    <section class="section related"><div class="section-heading"><h2>Você também pode gostar</h2></div><div class="product-grid"><% @related_products.each do |product| %><%= erb :_product_card, layout: false, locals: { product: product } %><% end %></div></section>
+  <% end %>
+</section>

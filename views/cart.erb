@@ -1,0 +1,18 @@
+<section class="shell cart-page">
+  <div class="breadcrumb"><a href="/">Início</a><span>/</span><strong>Meu carrinho</strong></div>
+  <h1>Meu carrinho</h1>
+  <% if @cart_products.any? %>
+    <% total = 0 %>
+    <div class="cart-layout">
+      <section class="cart-items">
+        <% @cart_products.each do |id, product| %>
+          <% quantity = cart[id.to_s].to_i; total += product.price_cents * quantity %>
+          <article class="cart-item"><img src="<%= escape_html(product_image(product)) %>" alt=""><div><a href="/produtos/<%= product.slug %>"><h2><%= escape_html(product.title) %></h2></a><p>Quantidade: <strong><%= quantity %></strong></p><span><%= money(product.price_cents) %> cada</span></div><div class="cart-item-end"><strong><%= money(product.price_cents * quantity) %></strong><form action="/carrinho/<%= product.id %>/remover" method="post"><button class="link-button danger" type="submit">Remover</button></form></div></article>
+        <% end %>
+      </section>
+      <aside class="order-summary"><h2>Resumo da compra</h2><p><span>Produtos (<%= cart_count %>)</span><strong><%= money(total) %></strong></p><p><span>Frete</span><strong class="free">A calcular</strong></p><hr><p class="summary-total"><span>Total</span><strong><%= money(total) %></strong></p><form action="/checkout" method="post"><button class="button button-primary button-wide" type="submit">Continuar compra</button></form><small>Você será direcionado para entrar antes de confirmar, se necessário.</small></aside>
+    </div>
+  <% else %>
+    <div class="empty-state"><strong>Seu carrinho está vazio.</strong><p>Explore produtos incríveis e adicione os seus favoritos.</p><a class="button button-primary" href="/produtos">Explorar produtos</a></div>
+  <% end %>
+</section>

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Mercado Viva, seu marketplace para comprar e vender online.">
+    <title>Mercado Viva — compre e venda</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-main shell">
+        <a class="brand" href="/" aria-label="Mercado Viva, início">
+          <span class="brand-mark">v</span>
+          <span>mercado<span>viva</span></span>
+        </a>
+        <form class="search" action="/produtos" method="get" role="search">
+          <input name="q" value="<%= escape_html(params["q"].to_s) %>" placeholder="Buscar produtos, marcas e muito mais" aria-label="Buscar produtos">
+          <button type="submit" aria-label="Buscar">⌕</button>
+        </form>
+        <nav class="user-nav" aria-label="Navegação da conta">
+          <% if signed_in? %>
+            <a href="/minha-conta">Olá, <strong><%= escape_html(current_user.username) %></strong></a>
+            <form action="/sair" method="post"><button class="link-button" type="submit">Sair</button></form>
+          <% else %>
+            <a href="/cadastro">Crie sua conta</a>
+            <a href="/entrar">Entre</a>
+          <% end %>
+          <a class="cart-link" href="/carrinho" aria-label="Carrinho com <%= cart_count %> itens">🛍 <span><%= cart_count %></span></a>
+        </nav>
+      </div>
+      <div class="header-sub shell">
+        <a href="/produtos">Categorias</a>
+        <a href="/produtos?ordem=menor-preco">Ofertas</a>
+        <a href="/anunciar">Vender</a>
+        <span class="shipping-note">✦ Frete grátis em produtos selecionados</span>
+      </div>
+    </header>
+
+    <% if @notice %><div class="flash flash-notice shell"><%= escape_html(@notice) %></div><% end %>
+    <% if @alert %><div class="flash flash-alert shell"><%= escape_html(@alert) %></div><% end %>
+
+    <main><%= yield %></main>
+
+    <footer class="site-footer">
+      <div class="shell footer-grid">
+        <div>
+          <a class="brand brand-footer" href="/"><span class="brand-mark">v</span><span>mercado<span>viva</span></span></a>
+          <p>Uma vitrine simples, humana e segura para encontrar o que move você.</p>
+        </div>
+        <div><strong>Comprar</strong><a href="/produtos">Explorar produtos</a><a href="/carrinho">Meu carrinho</a></div>
+        <div><strong>Vender</strong><a href="/anunciar">Criar anúncio</a><a href="/minha-conta">Minha conta</a></div>
+        <div><strong>Ajuda</strong><a href="/produtos?ordem=menor-preco">Ofertas da semana</a><span>Compra protegida</span></div>
+      </div>
+      <div class="shell footer-bottom">© <%= Time.now.year %> Mercado Viva · Feito para comprar com tranquilidade.</div>
+    </footer>
+  </body>
+</html>
