@@ -1,1 +1,60 @@
+# Vitrine Livre — marketplace Ruby
 
+Aplicação web executável de marketplace, inspirada na experiência de navegação de grandes
+sites de compra e venda. Ela oferece vitrine de produtos, busca, categorias, detalhe do
+anúncio, carrinho, cadastro/login, checkout transacional, histórico de compras e publicação
+de anúncios.
+
+## Requisitos
+
+- Ruby 3.1 ou superior
+- Bundler
+
+## Inicialização local
+
+```bash
+bundle install
+DASHBOARDIA_DEMO_MODE=true \
+DASHBOARDIA_DEMO_USERNAME=admin \
+DASHBOARDIA_DEMO_EMAIL=admin@vitrine.local \
+DASHBOARDIA_DEMO_PASSWORD=admin12345 \
+bundle exec puma
+```
+
+Abra `http://localhost:9292`. A rota `/` é a vitrine principal, preparada para validação
+visual responsiva. A API de leitura está disponível em `GET /api/listings`.
+
+Na primeira inicialização, a aplicação cria automaticamente o banco SQLite em
+`db/marketplace.sqlite3`, executa as migrações e, com `DASHBOARDIA_DEMO_MODE=true`, cria
+uma conta administrativa e produtos demonstrativos. O acesso administrativo usa exatamente
+os valores de `DASHBOARDIA_DEMO_USERNAME`, `DASHBOARDIA_DEMO_EMAIL` e
+`DASHBOARDIA_DEMO_PASSWORD` (os valores do exemplo acima são os defaults de desenvolvimento).
+Nesse modo também é gerado `.dashboardia/demo-access.json` com `{"version":1}`.
+
+Para criar ou atualizar somente a massa demonstrativa manualmente:
+
+```bash
+bundle exec ruby db/seed.rb
+```
+
+> A execução manual do seed também é idempotente. Em modo demonstrativo, ela não é
+> necessária porque a carga acontece durante o bootstrap.
+
+## Configuração
+
+| Variável | Finalidade | Padrão |
+| --- | --- | --- |
+| `DATABASE_URL` | URL Active Record (SQLite por padrão) | `sqlite3:db/marketplace.sqlite3` |
+| `DASHBOARDIA_DEMO_MODE` | Ativa admin, catálogo demo e marcador de acesso | desativado |
+| `DASHBOARDIA_DEMO_USERNAME` | Usuário administrador demo | `admin` |
+| `DASHBOARDIA_DEMO_EMAIL` | E-mail administrador demo | `admin@vitrine.local` |
+| `DASHBOARDIA_DEMO_PASSWORD` | Senha administrador demo | `admin12345` |
+| `SESSION_SECRET` | Segredo da sessão em produção | segredo local de desenvolvimento |
+| `AUTO_MIGRATE` | Executa migrações na inicialização | `true` |
+
+## Persistência
+
+As migrações ficam em `db/migrate`; o modelo relacional contém usuários, categorias,
+anúncios, pedidos e itens de pedido. Chaves estrangeiras, índices únicos e restrições de
+preço, estoque, condição e status são aplicados no banco. Os timestamps de auditoria são
+centralizados no `ApplicationRecord`.

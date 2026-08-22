@@ -1,0 +1,17 @@
+<% @title = "Seu carrinho" %>
+<section class="wrap narrow-page">
+  <div class="page-header page-header--compact"><p class="breadcrumb"><a href="/">Início</a> / Carrinho</p><h1>Seu carrinho</h1></div>
+  <% if @cart_lines.empty? %>
+    <div class="empty-state"><div class="empty-icon">🛒</div><h2>Seu carrinho está vazio</h2><p>Descubra produtos incríveis e volte quando quiser.</p><a class="button" href="/">Ver ofertas</a></div>
+  <% else %>
+    <div class="cart-layout">
+      <div class="cart-items">
+        <% @cart_lines.each do |line| %>
+          <% listing = line[:listing] %>
+          <article class="cart-item"><img src="<%= h(listing_image(listing)) %>" alt=""><div class="cart-item__info"><a href="/anuncios/<%= listing.id %>"><%= h(listing.title) %></a><p><%= condition_label(listing.condition) %> · Quantidade: <%= line[:quantity] %></p><p class="shipping">Frete grátis</p><form action="/carrinho/<%= listing.id %>/remover" method="post"><button class="link-button remove-button" type="submit">Remover</button></form></div><strong><%= money(listing.price_cents * line[:quantity]) %></strong></article>
+        <% end %>
+      </div>
+      <aside class="summary"><h2>Resumo da compra</h2><div><span>Produtos (<%= cart_count %>)</span><strong><%= money(@total_cents) %></strong></div><div class="summary-total"><span>Total</span><strong><%= money(@total_cents) %></strong></div><form action="/checkout" method="post"><button class="button button--wide" type="submit">Continuar a compra</button></form><p>Compra protegida pela Vitrine Livre</p></aside>
+    </div>
+  <% end %>
+</section>

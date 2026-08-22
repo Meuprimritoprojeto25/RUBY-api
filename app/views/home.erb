@@ -1,0 +1,53 @@
+<% @title = "Comprar e vender online" %>
+<section class="hero">
+  <div class="wrap hero__content">
+    <div>
+      <span class="eyebrow">OFERTAS QUE MOVEM VOCÊ</span>
+      <h1>Encontre tudo<br>em um só lugar</h1>
+      <p>Produtos novos e usados de vendedores verificados.</p>
+      <a class="button button--dark" href="#ofertas">Ver ofertas</a>
+    </div>
+    <div class="hero__art" aria-hidden="true">
+      <div class="hero__circle"></div><div class="hero__box box-one">⌁</div><div class="hero__box box-two">★</div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap benefits" aria-label="Benefícios">
+  <div><span>▣</span><p><strong>Frete rápido</strong><br>para todo o Brasil</p></div>
+  <div><span>♧</span><p><strong>Compra protegida</strong><br>do pagamento à entrega</p></div>
+  <div><span>◉</span><p><strong>Venda simples</strong><br>publique sem custo</p></div>
+</section>
+
+<section class="wrap categories-section">
+  <div class="section-heading"><h2>Explore por categoria</h2><a href="#ofertas">Ver todas</a></div>
+  <div class="category-row">
+    <% @categories.each do |category| %>
+      <a href="/categoria/<%= h(category.slug) %>" class="category-card"><span class="category-icon"><%= { "tecnologia" => "⌘", "casa-e-decoracao" => "⌂", "moda" => "♢", "esportes" => "◌", "veiculos" => "▱" }[category.slug] || "○" %></span><span><%= h(category.name) %></span></a>
+    <% end %>
+  </div>
+</section>
+
+<section id="ofertas" class="wrap listings-section">
+  <div class="section-heading">
+    <h2><%= @query.empty? ? "Ofertas em destaque" : "Resultados para “#{h(@query)}”" %></h2>
+    <% unless @query.empty? %><a href="/">Limpar busca</a><% end %>
+  </div>
+  <% if @listings.any? %>
+    <div class="listing-grid">
+      <% @listings.each do |listing| %>
+        <article class="product-card">
+          <a href="/anuncios/<%= listing.id %>" class="product-card__image"><img src="<%= h(listing_image(listing)) %>" alt="<%= h(listing.title) %>"></a>
+          <div class="product-card__body">
+            <p class="price"><%= money(listing.price_cents) %></p>
+            <p class="installments">em até 10x sem juros</p>
+            <a href="/anuncios/<%= listing.id %>" class="product-title"><%= h(listing.title) %></a>
+            <p class="shipping">Frete grátis</p>
+          </div>
+        </article>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="empty-state"><h3>Nenhum anúncio encontrado</h3><p>Tente buscar por outro termo ou explore nossas categorias.</p><a class="button" href="/">Voltar às ofertas</a></div>
+  <% end %>
+</section>
