@@ -1,0 +1,13 @@
+<section class="shell account-page">
+  <p class="eyebrow">Área pessoal</p><h1>Olá, <%= escape_html(current_user.username) %></h1><p class="account-subtitle">Acompanhe suas compras, itens salvos e a sua vitrine.</p>
+  <div class="account-stats"><div><strong><%= @orders.count %></strong><span>Pedidos</span></div><div><strong><%= @favorites.count %></strong><span>Favoritos</span></div><div><strong><%= @my_products.count %></strong><span>Anúncios</span></div></div>
+  <section class="account-section"><div class="section-heading"><h2>Meus anúncios</h2><a href="/anunciar">Criar anúncio <span>→</span></a></div>
+    <% if @my_products.any? %><div class="mini-list"><% @my_products.each do |product| %><a href="/produtos/<%= product.slug %>"><span><%= escape_html(product.title) %></span><small><%= escape_html(product.category.name) %></small><strong><%= money(product.price_cents) %></strong><em><%= product.status == "active" ? "Ativo" : product.status %></em></a><% end %></div><% else %><div class="empty-inline">Você ainda não publicou nada. <a href="/anunciar">Criar meu primeiro anúncio</a></div><% end %>
+  </section>
+  <section class="account-section"><div class="section-heading"><h2>Pedidos recentes</h2></div>
+    <% if @orders.any? %><div class="mini-list"><% @orders.each do |order| %><div><span>Pedido #<%= order.id %> · <%= order.created_at.strftime("%d/%m/%Y") %></span><small><%= order.order_items.sum(:quantity) %> item(ns)</small><strong><%= money(order.total_cents) %></strong><em>Recebido</em></div><% end %></div><% else %><div class="empty-inline">Nenhuma compra por enquanto.</div><% end %>
+  </section>
+  <section class="account-section"><div class="section-heading"><h2>Favoritos</h2></div>
+    <% if @favorites.any? %><div class="product-grid favorites-grid"><% @favorites.each do |product| %><%= erb :_product_card, layout: false, locals: { product: product } %><% end %></div><% else %><div class="empty-inline">Salve produtos para encontrá-los facilmente depois.</div><% end %>
+  </section>
+</section>

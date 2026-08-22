@@ -1,0 +1,12 @@
+<article class="product-card">
+  <a class="product-image-wrap" href="/produtos/<%= product.slug %>">
+    <img src="<%= escape_html(product_image(product)) %>" alt="<%= escape_html(product.title) %>">
+    <span class="tag">Frete grátis</span>
+  </a>
+  <div class="product-card-body">
+    <p class="product-category"><%= escape_html(product.category.name) %></p>
+    <a class="product-title" href="/produtos/<%= product.slug %>"><%= escape_html(product.title) %></a>
+    <div class="product-price"><strong><%= money(product.price_cents) %></strong><small>em até 10x sem juros</small></div>
+    <p class="seller-name">Por <%= escape_html(product.seller.username) %></p>
+  </div>
+</article>

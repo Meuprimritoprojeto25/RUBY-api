@@ -1,0 +1,15 @@
+<section class="shell form-page">
+  <div class="breadcrumb"><a href="/">Início</a><span>/</span><strong>Criar anúncio</strong></div>
+  <div class="form-page-heading"><p class="eyebrow">Sua vitrine começa aqui</p><h1>Publique um produto</h1><p>Preencha os detalhes para que mais pessoas encontrem o que você vende.</p></div>
+  <div class="listing-form-card">
+    <% if @product.errors.any? %><div class="form-errors"><%= @product.errors.full_messages.join(". ") %></div><% end %>
+    <form class="form-stack" action="/anunciar" method="post">
+      <label>Título do anúncio<input name="title" value="<%= escape_html(@product.title.to_s) %>" required minlength="5" maxlength="100" placeholder="Ex.: Câmera instantânea azul"></label>
+      <label>Categoria<select name="category_id" required><option value="">Selecione uma categoria</option><% @categories.each do |category| %><option value="<%= category.id %>" <%= "selected" if @product.category_id == category.id %>><%= escape_html(category.name) %></option><% end %></select></label>
+      <div class="form-row"><label>Preço (R$)<input name="price" value="<%= @product.price_cents ? format("%.2f", @product.price_cents / 100.0).tr(".", ",") : "" %>" required inputmode="decimal" placeholder="0,00"></label><label>Quantidade disponível<input type="number" name="stock" value="<%= @product.stock %>" required min="0" step="1"></label></div>
+      <label>URL da imagem <small>(opcional)</small><input type="url" name="image_url" value="<%= escape_html(@product.image_url.to_s) %>" placeholder="https://..."></label>
+      <label>Descrição<textarea name="description" required minlength="20" maxlength="2000" placeholder="Conte os detalhes, condição e diferenciais do produto."><%= escape_html(@product.description.to_s) %></textarea></label>
+      <button class="button button-primary" type="submit">Publicar anúncio <span>→</span></button>
+    </form>
+  </div>
+</section>

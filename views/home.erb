@@ -1,0 +1,64 @@
+<section class="hero">
+  <div class="shell hero-content">
+    <div class="hero-copy">
+      <p class="eyebrow">O marketplace que fala a sua língua</p>
+      <h1>Encontre o <em>próximo</em> item que vai fazer diferença.</h1>
+      <p>Milhares de produtos para a sua casa, rotina e paixões. Compre de pessoas e lojas que você confia.</p>
+      <form class="hero-search" action="/produtos" method="get">
+        <input name="q" placeholder="O que você está procurando?">
+        <button class="button button-dark" type="submit">Explorar agora <span>→</span></button>
+      </form>
+      <div class="hero-benefits"><span>✓ Compra protegida</span><span>✓ Pagamento seguro</span><span>✓ Vendedores verificados</span></div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <div class="hero-circle"></div>
+      <div class="hero-card hero-card-main">
+        <span class="card-label">EM DESTAQUE</span>
+        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80" alt="">
+        <span class="hero-card-title">Seu ritmo, seu estilo.</span>
+      </div>
+      <div class="hero-card hero-card-small">★ 4,9 <span>avaliado por compradores</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="shell section category-section">
+  <div class="section-heading">
+    <div><p class="eyebrow">Navegue do seu jeito</p><h2>O que você quer descobrir?</h2></div>
+    <a href="/produtos">Ver todas as categorias <span>→</span></a>
+  </div>
+  <div class="categories">
+    <% @categories.each_with_index do |category, index| %>
+      <a class="category category-<%= index % 5 %>" href="/produtos?categoria=<%= category.slug %>">
+        <span class="category-icon"><%= ["⌁", "⌂", "✦", "◌", "⌁"][index % 5] %></span>
+        <span><%= escape_html(category.name) %></span><b>→</b>
+      </a>
+    <% end %>
+    <% if @categories.empty? %>
+      <p class="empty-inline">As categorias aparecerão aqui quando os primeiros produtos forem publicados.</p>
+    <% end %>
+  </div>
+</section>
+
+<section class="shell section product-section">
+  <div class="section-heading">
+    <div><p class="eyebrow">Achados da semana</p><h2>Produtos em destaque</h2></div>
+    <a href="/produtos">Ver vitrine completa <span>→</span></a>
+  </div>
+  <% if @featured_products.any? %>
+    <div class="product-grid">
+      <% @featured_products.each do |product| %>
+        <%= erb :_product_card, layout: false, locals: { product: product } %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="empty-state"><strong>A vitrine está sendo preparada.</strong><p>Ative o modo demonstrativo ou publique o primeiro anúncio para vê-lo aqui.</p></div>
+  <% end %>
+</section>
+
+<section class="seller-banner">
+  <div class="shell seller-banner-content">
+    <div><p class="eyebrow">Tem algo especial para vender?</p><h2>Transforme o que você faz<br>em novas possibilidades.</h2></div>
+    <div><p>Abra sua vitrine em poucos minutos, alcance novos compradores e gerencie tudo em um só lugar.</p><a class="button button-light" href="/anunciar">Começar a vender <span>→</span></a></div>
+  </div>
+</section>

@@ -1,0 +1,29 @@
+<section class="shell listing-page">
+  <div class="breadcrumb"><a href="/">Início</a><span>/</span><span>Produtos</span><% if @category %><span>/</span><strong><%= escape_html(@category.name) %></strong><% end %></div>
+  <div class="listing-title"><div><p class="eyebrow">Vitrine Mercado Viva</p><h1><%= escape_html(@query.empty? ? (@category ? @category.name : "Explore produtos") : "Resultados para “#{@query}”") %></h1><p><%= @products.count %> produto(s) encontrado(s)</p></div></div>
+  <div class="listing-layout">
+    <aside class="filters">
+      <form action="/produtos" method="get">
+        <% if !@query.empty? %><input type="hidden" name="q" value="<%= escape_html(@query) %>"><% end %>
+        <h3>Categorias</h3>
+        <a class="<%= "selected" unless @category %>" href="/produtos<%= @query.empty? ? "" : "?q=#{URI.encode_www_form_component(@query)}" %>">Todas as categorias</a>
+        <% @categories.each do |category| %>
+          <a class="<%= "selected" if @category == category %>" href="/produtos?categoria=<%= category.slug %><%= @query.empty? ? "" : "&q=#{URI.encode_www_form_component(@query)}" %>"><%= escape_html(category.name) %></a>
+        <% end %>
+        <h3>Ordenar por</h3>
+        <select name="ordem" onchange="this.form.submit()">
+          <option value="">Mais recentes</option>
+          <option value="menor-preco" <%= "selected" if params["ordem"] == "menor-preco" %>>Menor preço</option>
+          <option value="maior-preco" <%= "selected" if params["ordem"] == "maior-preco" %>>Maior preço</option>
+        </select>
+      </form>
+    </aside>
+    <div>
+      <% if @products.any? %>
+        <div class="product-grid"><% @products.each do |product| %><%= erb :_product_card, layout: false, locals: { product: product } %><% end %></div>
+      <% else %>
+        <div class="empty-state"><strong>Nada por aqui ainda.</strong><p>Tente outra busca ou seja a primeira pessoa a <a href="/anunciar">publicar um anúncio</a>.</p></div>
+      <% end %>
+    </div>
+  </div>
+</section>
