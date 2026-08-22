@@ -28,6 +28,13 @@ pendentes automaticamente. Portanto, um banco limpo pode iniciar diretamente pel
 comando do servidor. O banco fica em `db/development.sqlite3` (ou no caminho
 definido por `DATABASE_PATH`).
 
+## Publicação
+
+O `Procfile` define explicitamente o processo web como
+`bundle exec puma -C config/puma.rb`. Assim, provedores compatíveis com Procfile
+iniciam o servidor Puma ligado à porta `PORT`, em vez de executar `rails` sem o
+subcomando de servidor.
+
 ## Dados demonstrativos e acesso administrativo
 
 Os dados são **opt-in**: só são criados com `DASHBOARDIA_DEMO_MODE=true`. Nesse
