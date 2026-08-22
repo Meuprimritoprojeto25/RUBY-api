@@ -3,7 +3,10 @@
 require "securerandom"
 require "sinatra/base"
 require "sequel"
-require "sequel/extensions/migration"
+# Sequel keeps migrations as an opt-in extension. Load it through Sequel's
+# extension loader before the application class is evaluated, since class
+# setup runs the migrations immediately at boot.
+Sequel.extension :migration
 require "sqlite3"
 
 # Mercado Pulse is a small, self-contained marketplace.  It intentionally uses

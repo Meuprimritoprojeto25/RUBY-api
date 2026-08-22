@@ -2,6 +2,7 @@
 
 require "rake"
 require "sequel"
+Sequel.extension :migration
 require_relative "app"
 
 namespace :db do
