@@ -1,0 +1,12 @@
+<% @title = @product[:title] %>
+<section class="shell product-page">
+  <div class="breadcrumbs"><a href="/">Início</a><span>›</span><a href="/produtos?categoria=<%= h(@category[:slug]) %>"><%= h(@category[:name]) %></a><span>›</span><b><%= h(@product[:title]) %></b></div>
+  <div class="product-detail">
+    <div class="detail-image"><% if @product[:discount_percent].positive? %><span class="discount-badge"><%= @product[:discount_percent] %>% OFF</span><% end %><img src="<%= h(@product[:image_url]) %>" alt="<%= h(@product[:title]) %>"></div>
+    <div class="detail-summary"><span class="overline">NOVO · <%= @product[:stock] %> disponíveis</span><h1><%= h(@product[:title]) %></h1><div class="rating">★★★★★ <span>4.9 · 128 avaliações</span></div><% if @product[:original_price_cents] %><div class="detail-old-price"><%= money(@product[:original_price_cents]) %></div><% end %><div class="detail-price"><%= money(@product[:price_cents]) %> <em><%= @product[:discount_percent] %>% OFF</em></div><p class="installments">em até <b>10x sem juros</b></p><div class="shipping-box"><span>♙</span><p><b>Frete grátis</b><small>Chega em 2 a 4 dias úteis para todo o Brasil</small></p></div>
+      <form action="/carrinho/adicionar/<%= @product[:id] %>" method="post" class="buy-form"><%= csrf_field %><input type="hidden" name="return_to" value="/produtos/<%= h(@product[:slug]) %>"><label>Quantidade <select name="quantity"><% [1, 2, 3].each { |quantity| %><option value="<%= quantity %>"><%= quantity %> unidade<%= "s" if quantity > 1 %></option><% } %></select></label><button class="button button-blue" type="submit">Adicionar ao carrinho</button><a href="/carrinho" class="button button-light">Ver meu carrinho</a></form>
+    </div>
+  </div>
+  <div class="description-box"><h2>Sobre este produto</h2><p><%= h(@product[:description]) %></p><ul><li>Produto original, enviado por loja verificada.</li><li>Compra protegida e devolução grátis em até 30 dias.</li><li>Nota fiscal e suporte especializado inclusos.</li></ul></div>
+</section>
+<section class="shell section related-section"><div class="section-heading"><h2>Quem viu este produto também viu</h2><a href="/produtos?categoria=<%= h(@category[:slug]) %>">Ver mais →</a></div><div class="product-grid"><% @related.each do |product| %><%= product_card(product) %><% end %></div></section>

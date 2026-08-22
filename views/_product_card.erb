@@ -1,0 +1,20 @@
+<article class="product-card">
+  <a class="product-image" href="/produtos/<%= h(product[:slug]) %>">
+    <% if product[:discount_percent].positive? %><span class="discount-badge"><%= product[:discount_percent] %>% OFF</span><% end %>
+    <img src="<%= h(product[:image_url]) %>" alt="<%= h(product[:title]) %>" loading="lazy">
+  </a>
+  <div class="product-info">
+    <a href="/produtos/<%= h(product[:slug]) %>" class="product-name"><%= h(product[:title]) %></a>
+    <div class="price-row">
+      <strong><%= money(product[:price_cents]) %></strong>
+      <% if product[:discount_percent].positive? %><em><%= product[:discount_percent] %>% OFF</em><% end %>
+    </div>
+    <% if product[:original_price_cents] %><span class="old-price"><%= money(product[:original_price_cents]) %></span><% end %>
+    <span class="free-shipping">Frete grátis</span>
+    <form action="/carrinho/adicionar/<%= product[:id] %>" method="post" class="card-cart-form">
+      <%= csrf_field %>
+      <input type="hidden" name="return_to" value="<%= h(current_path_with_query) %>">
+      <button class="button button-card" type="submit" <%= "disabled" if product[:stock].zero? %>><%= product[:stock].zero? ? "Sem estoque" : "Adicionar ao carrinho" %></button>
+    </form>
+  </div>
+</article>

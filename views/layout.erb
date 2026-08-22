@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffe600">
+    <meta name="description" content="Mercado Pulse: encontre produtos, ofertas e lojas em um só lugar.">
+    <title><%= @title ? "#{h(@title)} | Mercado Pulse" : "Mercado Pulse — tudo para sua vida" %></title>
+    <link rel="preconnect" href="https://images.unsplash.com">
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-main shell">
+        <a class="brand" href="/" aria-label="Mercado Pulse, início">
+          <span class="brand-mark"><i></i><i></i></span>
+          <span>mercado<span>pulse</span></span>
+        </a>
+        <form class="search" action="/produtos" method="get" role="search">
+          <input type="search" name="q" value="<%= h(@query) %>" placeholder="Buscar produtos, marcas e muito mais…" aria-label="O que você procura?">
+          <button type="submit" aria-label="Buscar">⌕</button>
+        </form>
+        <a class="header-location" href="/produtos">
+          <small>Enviar para</small>
+          <strong>⌖ Brasil, todo o país</strong>
+        </a>
+      </div>
+      <div class="header-nav shell">
+        <button class="mobile-menu" type="button" aria-label="Abrir menu" data-menu-toggle>☰</button>
+        <nav aria-label="Navegação principal" data-navigation>
+          <a href="/produtos">Categorias <span>⌄</span></a>
+          <a href="/produtos?ordenar=menor-preco">Ofertas</a>
+          <a href="/produtos?categoria=tecnologia">Tecnologia</a>
+          <a href="/produtos?categoria=moda">Moda</a>
+          <a href="/produtos?categoria=casa-e-decoracao">Casa e decoração</a>
+        </nav>
+        <div class="account-links">
+          <a href="/produtos">Crie a sua conta</a>
+          <a href="/produtos">Entrar</a>
+          <a href="/carrinho" class="cart-link" aria-label="Carrinho com <%= cart_count %> item(ns)">🛒 <b><%= cart_count %></b></a>
+        </div>
+      </div>
+    </header>
+
+    <% if session[:flash] %>
+      <div class="flash shell" role="status"><span>✓</span> <%= h(session.delete(:flash)) %></div>
+    <% end %>
+
+    <main><%= yield %></main>
+
+    <footer class="site-footer">
+      <div class="shell footer-grid">
+        <section>
+          <a class="brand footer-brand" href="/"><span class="brand-mark"><i></i><i></i></span>mercado<span>pulse</span></a>
+          <p>Compra simples, proteção em cada etapa e milhares de possibilidades para você.</p>
+        </section>
+        <section>
+          <h3>Sobre o Mercado Pulse</h3>
+          <a href="/produtos">Ofertas</a>
+          <a href="/produtos">Lojas oficiais</a>
+          <a href="/produtos">Tendências</a>
+        </section>
+        <section>
+          <h3>Ajuda</h3>
+          <a href="/carrinho">Compras e carrinho</a>
+          <a href="/checkout">Pagamento seguro</a>
+          <a href="/produtos">Central de atendimento</a>
+        </section>
+        <section>
+          <h3>Compra protegida</h3>
+          <p class="footer-safe">◈ Seus dados e sua compra são protegidos do início ao fim.</p>
+        </section>
+      </div>
+      <div class="footer-bottom shell">© <%= Time.now.year %> Mercado Pulse · Marketplace demonstrativo</div>
+    </footer>
+    <script src="/app.js"></script>
+  </body>
+</html>

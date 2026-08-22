@@ -1,0 +1,21 @@
+<% @title = @query.empty? ? "Produtos" : "Busca: #{@query}" %>
+<section class="catalog shell">
+  <div class="breadcrumbs"><a href="/">Início</a><span>›</span><b><%= @query.empty? ? "Produtos" : "Resultados para “#{h(@query)}”" %></b></div>
+  <div class="catalog-title"><div><h1><%= @query.empty? ? "Produtos para você" : "Resultados para “#{h(@query)}”" %></h1><p><%= @products.length %> produtos encontrados</p></div></div>
+  <div class="catalog-layout">
+    <aside class="filters">
+      <h2>Categorias</h2>
+      <a class="<%= "selected" if @category_slug.empty? %>" href="/produtos<%= @query.empty? ? "" : "?q=#{Rack::Utils.escape(@query)}" %>">Todas</a>
+      <% @categories.each do |category| %><a class="<%= "selected" if @category_slug == category[:slug] %>" href="/produtos?categoria=<%= h(category[:slug]) %><%= @query.empty? ? "" : "&q=#{Rack::Utils.escape(@query)}" %>"><%= h(category[:name]) %></a><% end %>
+      <hr><h2>Ordenar por</h2>
+      <a href="?<%= Rack::Utils.build_query(q: @query, categoria: @category_slug, ordenar: "menor-preco") %>">Menor preço</a>
+      <a href="?<%= Rack::Utils.build_query(q: @query, categoria: @category_slug, ordenar: "maior-preco") %>">Maior preço</a>
+    </aside>
+    <div class="catalog-products">
+      <div class="catalog-toolbar"><span>Entrega grátis em produtos selecionados</span><form method="get"><input type="hidden" name="q" value="<%= h(@query) %>"><input type="hidden" name="categoria" value="<%= h(@category_slug) %>"><select name="ordenar" onchange="this.form.submit()"><option value="">Mais relevantes</option><option value="menor-preco" <%= "selected" if params["ordenar"] == "menor-preco" %>>Menor preço</option><option value="maior-preco" <%= "selected" if params["ordenar"] == "maior-preco" %>>Maior preço</option></select></form></div>
+      <% if @products.empty? %><div class="empty-state"><span>⌕</span><h2>Nenhum produto encontrado</h2><p>Tente buscar outro termo ou explorar as categorias.</p><a class="button button-blue" href="/produtos">Ver todos os produtos</a></div><% else %>
+        <div class="product-grid catalog-grid"><% @products.each do |product| %><%= product_card(product) %><% end %></div>
+      <% end %>
+    </div>
+  </div>
+</section>
