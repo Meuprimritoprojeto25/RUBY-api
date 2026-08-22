@@ -105,7 +105,10 @@ class MercadoPulseApp < Sinatra::Base
     response.headers["X-Content-Type-Options"] = "nosniff"
   end
 
-  before %r{^/(carrinho|checkout|pedidos)} do
+  # Mustermann (used by Sinatra 4) anchors route regular expressions itself;
+  # explicit ^/$ anchors are rejected during application boot. This pattern
+  # covers the checkout endpoints and their nested action paths.
+  before %r{/(?:carrinho|checkout|pedidos)(?:/.*)?} do
     next unless request.post?
     halt 403, "Solicitação inválida." unless Rack::Utils.secure_compare(csrf_token, params["csrf_token"].to_s)
   end
