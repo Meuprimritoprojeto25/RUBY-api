@@ -11,3 +11,6 @@ gem "rackup", "~> 2.2"
 gem "activerecord", "~> 7.1"
 gem "sqlite3", "~> 1.7"
 gem "bcrypt", "~> 3.1"
+# rack-protection 4.1 requires Logger >= 1.6. Declaring it explicitly keeps
+# Bundler 2.3's compact-index resolution consistent with the checked-in lock.
+gem "logger", "~> 1.6"
