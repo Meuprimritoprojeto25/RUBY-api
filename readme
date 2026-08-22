@@ -25,25 +25,12 @@ Abra `http://localhost:9292`. A rota `/` é a vitrine principal, preparada para 
 visual responsiva. A API de leitura está disponível em `GET /api/listings`.
 
 O `Procfile` inicia o Puma com `config/puma.rb`, que usa `PORT` quando ela for
-fornecida pelo ambiente de publicação e faz bind em `0.0.0.0`. O `rackup` também
-é uma dependência explícita: isso mantém o `config.ru` inicializável em
-plataformas que escolhem esse comando automaticamente com Rack 3.
-O `Gemfile.lock` versiona essa dependência e seu executável junto com as demais
-gems de execução, para que uma publicação limpa instale o `rackup` antes de
-iniciar o processo web.
-O `rack-session` também é declarado diretamente e travado no lockfile: Sinatra
-4 o exige para sessões em Rack 3, e a aplicação o usa para montar
-explicitamente a sessão de carrinho e autenticação.
-O lockfile também registra as restrições completas de `logger`, `rack` e
-`rack-session` exigidas pelo Sinatra 4.1.1, evitando que o Bundler 2.3 precise
-descobrir essas dependências durante a instalação no ambiente de preview.
-
-O projeto também mantém `BUNDLE_FULL_INDEX=true` em `.bundle/config`. O Bundler
-2.3 usado no ambiente de publicação recebeu metadados incompletos para
-`rack-protection 4.1.1` pelo índice compacto, embora as dependências completas
-estejam no lockfile. A consulta ao índice completo evita essa inconsistência
-durante `bundle install`, sem alterar as gems travadas ou o processo de
-inicialização.
+fornecida pelo ambiente de publicação e faz bind em `0.0.0.0`. A aplicação fixa
+Sinatra 3.2 e Rack 2.2 no lockfile. Essa linha estável do Rack já fornece o
+executável `rackup`, portanto plataformas que iniciam um `config.ru` com
+`bundle exec rackup` e plataformas que usam o `Procfile` encontram o mesmo
+runtime sem depender dos metadados inconsistentes das gems auxiliares do Rack
+3/Sinatra 4 no Bundler 2.3 do preview.
 
 Na primeira inicialização, a aplicação cria automaticamente o banco SQLite em
 `db/marketplace.sqlite3`, executa as migrações e, com `DASHBOARDIA_DEMO_MODE=true`, cria
@@ -75,10 +62,9 @@ bundle exec ruby db/seed.rb
 
 O valor de `SESSION_SECRET` é derivado com SHA-512 e passado diretamente ao
 `Rack::Session::Cookie`; a aplicação não usa a configuração implícita de sessão
-do Sinatra. Assim, o segredo entregue ao Rack 3 sempre tem os 64 bytes mínimos
-exigidos (a derivação hexadecimal produz 128 bytes), inclusive em previews sem
-essa variável ou com um valor legado curto. Em produção, configure uma variável
-exclusiva, longa e aleatória.
+do Sinatra. A derivação hexadecimal produz 128 bytes e aceita com segurança
+previews sem essa variável ou com um valor legado curto. Em produção, configure
+uma variável exclusiva, longa e aleatória.
 
 ## Persistência
 
