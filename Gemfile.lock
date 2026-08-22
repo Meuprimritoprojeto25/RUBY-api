@@ -55,8 +55,9 @@ DEPENDENCIES
   activerecord (~> 7.1)
   bcrypt (~> 3.1)
   puma (~> 6.0)
-  rack (~> 2.2)
-  sinatra (~> 3.2)
+  rack (= 2.2.10)
+  rack-protection (= 3.2.0)
+  sinatra (= 3.2.0)
   sqlite3 (~> 1.7)
 
 RUBY VERSION
