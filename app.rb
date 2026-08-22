@@ -3,6 +3,7 @@
 require "securerandom"
 require "sinatra/base"
 require "sequel"
+require "sequel/extensions/migration"
 require "sqlite3"
 
 # Mercado Pulse is a small, self-contained marketplace.  It intentionally uses
