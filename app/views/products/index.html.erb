@@ -1,0 +1,12 @@
+<section class="shell catalog-page">
+  <div class="breadcrumb">Início / <%= params[:offer] == "true" ? "Ofertas" : "Produtos" %></div>
+  <h1><%= params[:offer] == "true" ? "Ofertas imperdíveis" : (@query.present? ? "Resultados para “#{@query}”" : "Produtos em destaque") %></h1>
+  <div class="catalog-layout">
+    <aside class="filters"><strong>Categorias</strong><%= link_to "Todos os produtos", products_path(q: @query) %><% @categories.each { |category| %><%= link_to category.name, category_path(category.slug) %><% } %><hr><strong>Benefícios</strong><span>✓ Frete grátis</span><span>✓ Compra protegida</span></aside>
+    <div>
+      <p class="result-count"><%= pluralize(@products.count, "produto encontrado", "produtos encontrados") %></p>
+      <div class="product-grid"><%= render partial: "card", collection: @products, as: :product %></div>
+      <% if @products.empty? %><div class="empty-state">Não encontramos produtos para esta busca. Tente outro termo.</div><% end %>
+    </div>
+  </div>
+</section>

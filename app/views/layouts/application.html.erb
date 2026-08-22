@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <title>Mercado Livre | Encontre tudo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffe600">
+    <%= csrf_meta_tags %>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-main shell">
+        <%= link_to root_path, class: "brand", aria: { label: "Mercado Livre, página inicial" } do %>
+          <span class="brand-mark">m</span><span>mercado<br><strong>livre</strong></span>
+        <% end %>
+        <%= form_with url: products_path, method: :get, class: "search-form" do |form| %>
+          <%= form.search_field :q, value: params[:q], placeholder: "Buscar produtos, marcas e muito mais…", aria: { label: "Buscar" } %>
+          <%= form.button "Buscar", name: nil, class: "search-button" %>
+        <% end %>
+        <div class="header-actions">
+          <% if signed_in? %>
+            <span class="welcome">Olá, <%= current_user.username %></span>
+            <%= button_to "Sair", session_path, method: :delete, class: "text-action" %>
+          <% else %>
+            <%= link_to "Entre", new_session_path %>
+            <%= link_to "Crie sua conta", new_user_path %>
+          <% end %>
+          <%= link_to cart_path, class: "cart-link", aria: { label: "Carrinho com #{cart_count} itens" } do %>
+            🛒 <span>Carrinho</span><b><%= cart_count %></b>
+          <% end %>
+        </div>
+      </div>
+      <nav class="header-nav shell" aria-label="Navegação principal">
+        <span class="location">⌖ Informe seu CEP</span>
+        <%= link_to "Categorias", products_path %>
+        <%= link_to "Ofertas", ofertas_path %>
+        <%= link_to "Histórico", root_path %>
+        <%= link_to "Supermercado", products_path(category: Category.find_by(slug: "casa-e-decoracao")&.id) %>
+        <%= link_to "Moda", category_path("moda") %>
+        <span class="nav-spacer"></span>
+        <%= link_to "Vender", vender_path %>
+        <%= link_to "Ajuda", ajuda_path %>
+      </nav>
+    </header>
+
+    <% flash.each do |type, message| %>
+      <div class="flash <%= type %>"><div class="shell"><%= message %></div></div>
+    <% end %>
+    <main><%= yield %></main>
+    <footer class="site-footer">
+      <div class="shell footer-grid">
+        <div><strong>Mercado Livre</strong><p>Compras seguras, produtos incríveis e vendedores confiáveis.</p></div>
+        <div><strong>Compre com confiança</strong><p>Compra Garantida · Devolução grátis · Pagamento protegido</p></div>
+        <div><strong>Atendimento</strong><p>Central de ajuda · Termos e condições</p></div>
+      </div>
+    </footer>
+  </body>
+</html>

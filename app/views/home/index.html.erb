@@ -1,0 +1,54 @@
+<section class="hero">
+  <div class="shell hero-content">
+    <div class="hero-copy">
+      <span class="eyebrow">OFERTAS QUE CHEGAM HOJE</span>
+      <h1>Seu próximo achado está aqui.</h1>
+      <p>Milhões de produtos, entregas rápidas e compra protegida em um só lugar.</p>
+      <%= link_to "Ver ofertas", ofertas_path, class: "primary-button" %>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <div class="hero-circle"></div><span class="tag tag-one">até 40% OFF</span><span class="tag tag-two">Frete grátis</span>
+      <div class="hero-box">🛍️</div>
+    </div>
+  </div>
+</section>
+
+<section class="shell benefits">
+  <div><span>⚡</span><p><strong>Frete grátis</strong><br>em milhares de produtos</p></div>
+  <div><span>▣</span><p><strong>Parcelamento sem juros</strong><br>com cartão de crédito</p></div>
+  <div><span>♧</span><p><strong>Compra Garantida</strong><br>receba o produto ou seu dinheiro de volta</p></div>
+  <div><span>❔</span><p><strong>Precisa de ajuda?</strong><br>conte com a gente</p></div>
+</section>
+
+<section class="shell section">
+  <div class="section-heading"><div><span class="eyebrow">NAVEGUE POR</span><h2>Categorias populares</h2></div><%= link_to "Ver todas →", products_path %></div>
+  <div class="category-grid">
+    <% @categories.each do |category| %>
+      <%= link_to category_path(category.slug), class: "category-card" do %>
+        <div class="category-icon"><%= category.name.first %></div><strong><%= category.name %></strong><span>Ver produtos →</span>
+      <% end %>
+    <% end %>
+    <% if @categories.empty? %><p class="empty-message">Ative o modo demonstrativo para conhecer o catálogo.</p><% end %>
+  </div>
+</section>
+
+<section class="section light-section">
+  <div class="shell">
+    <div class="section-heading"><div><span class="eyebrow">SELEÇÃO ESPECIAL</span><h2>Ofertas do dia</h2></div><%= link_to "Ver todas as ofertas →", ofertas_path %></div>
+    <div class="product-grid">
+      <%= render partial: "products/card", collection: @offer_products, as: :product %>
+    </div>
+  </div>
+</section>
+
+<section class="shell section">
+  <div class="section-heading"><div><span class="eyebrow">MAIS VENDIDOS</span><h2>Descubra produtos incríveis</h2></div><%= link_to "Ver catálogo →", products_path %></div>
+  <div class="product-grid">
+    <%= render partial: "products/card", collection: @featured_products, as: :product %>
+  </div>
+</section>
+
+<section class="shell purchase-banner">
+  <div><span class="eyebrow">VENDA NO MERCADO LIVRE</span><h2>Transforme o que você faz em negócio.</h2><p>Publique seus produtos e alcance pessoas de todo o Brasil.</p></div>
+  <%= link_to "Começar a vender", vender_path, class: "outline-button" %>
+</section>

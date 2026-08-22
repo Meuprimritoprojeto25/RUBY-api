@@ -1,0 +1,7 @@
+<section class="shell catalog-page">
+  <div class="breadcrumb"><%= link_to "Início", root_path %> / <%= @category.name %></div>
+  <h1><%= @category.name %></h1>
+  <p class="result-count">Encontre as melhores ofertas desta categoria.</p>
+  <div class="product-grid"><%= render partial: "products/card", collection: @products, as: :product %></div>
+  <% if @products.empty? %><div class="empty-state">Ainda não há produtos nesta categoria.</div><% end %>
+</section>
