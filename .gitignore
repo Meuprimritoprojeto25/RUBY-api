@@ -1,5 +1,9 @@
 /vendor/bundle
-/.bundle
+# Keep the project-level Bundler resolver setting under version control while
+# excluding any other machine-specific Bundler state.
+/.bundle/*
+!/.bundle/
+!/.bundle/config
 /db/*.sqlite3
 /db/*.sqlite3-*
 /.dashboardia/

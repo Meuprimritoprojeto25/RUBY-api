@@ -32,6 +32,13 @@ O `Gemfile.lock` versiona essa dependência e seu executável junto com as demai
 gems de execução, para que uma publicação limpa instale o `rackup` antes de
 iniciar o processo web.
 
+O projeto também mantém `BUNDLE_FULL_INDEX=true` em `.bundle/config`. O Bundler
+2.3 usado no ambiente de publicação recebeu metadados incompletos para
+`rack-protection 4.1.1` pelo índice compacto, embora as dependências completas
+estejam no lockfile. A consulta ao índice completo evita essa inconsistência
+durante `bundle install`, sem alterar as gems travadas ou o processo de
+inicialização.
+
 Na primeira inicialização, a aplicação cria automaticamente o banco SQLite em
 `db/marketplace.sqlite3`, executa as migrações e, com `DASHBOARDIA_DEMO_MODE=true`, cria
 uma conta administrativa e produtos demonstrativos. O acesso administrativo usa exatamente
