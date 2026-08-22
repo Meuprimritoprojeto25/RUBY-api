@@ -3,21 +3,31 @@
 require "sinatra/base"
 require "digest"
 require "json"
+require "rack/session/cookie"
 
 class MarketplaceApp < Sinatra::Base
+  # Do not rely on Sinatra's implicit session middleware here. Its automatic
+  # configuration can retain the original environment value while a setting is
+  # changed later, which is particularly problematic with Rack 3's 64-byte
+  # minimum. This is the exact value passed to Rack::Session::Cookie below.
+  SESSION_COOKIE_SECRET = Digest::SHA512.hexdigest(
+    ENV.fetch("SESSION_SECRET", "local-development-session-secret-change-me-please")
+  ).freeze
+
   configure do
     set :root, APP_ROOT
     set :views, File.join(APP_ROOT, "app", "views")
     set :public_folder, File.join(APP_ROOT, "public")
-    enable :sessions
-    # Rack 3 requires cookie-session secrets to be at least 64 bytes. Hashing
-    # the configured value provides a fixed 128-byte secret even when a local
-    # or preview environment does not provide SESSION_SECRET (or provides a
-    # short legacy value), preventing requests from failing during middleware
-    # initialization.
-    session_secret_source = ENV.fetch("SESSION_SECRET", "local-development-session-secret-change-me-please")
-    set :session_secret, Digest::SHA512.hexdigest(session_secret_source)
+    disable :sessions
   end
+
+  # Rack 3 validates this option when processing the first request. SHA-512 in
+  # hexadecimal is always 128 bytes, so previews with an absent or legacy
+  # short SESSION_SECRET cannot fail request handling with "invalid secret".
+  use Rack::Session::Cookie,
+      key: "vitrine_livre.session",
+      secret: SESSION_COOKIE_SECRET,
+      same_site: :lax
 
   use Rack::MethodOverride
 

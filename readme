@@ -60,10 +60,12 @@ bundle exec ruby db/seed.rb
 | `SESSION_SECRET` | Material do segredo da sessão em produção | segredo local de desenvolvimento |
 | `AUTO_MIGRATE` | Executa migrações na inicialização | `true` |
 
-O valor de `SESSION_SECRET` é derivado com SHA-512 antes de configurar a sessão.
-Assim, o segredo entregue ao Rack 3 sempre tem os 64 bytes mínimos exigidos,
-inclusive em previews sem essa variável ou com um valor legado curto. Em produção,
-configure uma variável exclusiva, longa e aleatória.
+O valor de `SESSION_SECRET` é derivado com SHA-512 e passado diretamente ao
+`Rack::Session::Cookie`; a aplicação não usa a configuração implícita de sessão
+do Sinatra. Assim, o segredo entregue ao Rack 3 sempre tem os 64 bytes mínimos
+exigidos (a derivação hexadecimal produz 128 bytes), inclusive em previews sem
+essa variável ou com um valor legado curto. Em produção, configure uma variável
+exclusiva, longa e aleatória.
 
 ## Persistência
 
