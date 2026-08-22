@@ -8,6 +8,10 @@ gem "puma", "~> 6.0"
 # providers launch config.ru applications through `bundle exec rackup`, so it
 # must be declared directly rather than relying on a transitive dependency.
 gem "rackup", "~> 2.2"
+# Sinatra 4 delegates cookie sessions to this Rack 3 companion gem. Keeping it
+# direct makes the dependency available both to Sinatra and to the explicit
+# Rack::Session::Cookie middleware configured by the application.
+gem "rack-session", "~> 2.0"
 gem "activerecord", "~> 7.1"
 gem "sqlite3", "~> 1.7"
 gem "bcrypt", "~> 3.1"

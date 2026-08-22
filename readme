@@ -31,6 +31,12 @@ plataformas que escolhem esse comando automaticamente com Rack 3.
 O `Gemfile.lock` versiona essa dependência e seu executável junto com as demais
 gems de execução, para que uma publicação limpa instale o `rackup` antes de
 iniciar o processo web.
+O `rack-session` também é declarado diretamente e travado no lockfile: Sinatra
+4 o exige para sessões em Rack 3, e a aplicação o usa para montar
+explicitamente a sessão de carrinho e autenticação.
+O lockfile também registra as restrições completas de `logger`, `rack` e
+`rack-session` exigidas pelo Sinatra 4.1.1, evitando que o Bundler 2.3 precise
+descobrir essas dependências durante a instalação no ambiente de preview.
 
 O projeto também mantém `BUNDLE_FULL_INDEX=true` em `.bundle/config`. O Bundler
 2.3 usado no ambiente de publicação recebeu metadados incompletos para
