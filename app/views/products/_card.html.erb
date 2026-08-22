@@ -1,0 +1,14 @@
+<article class="product-card">
+  <%= link_to product_path(product), class: "product-image-wrap" do %>
+    <% if product.image_url.present? %><img src="<%= product.image_url %>" alt="<%= product.title %>"><% else %><div class="image-placeholder">Produto</div><% end %>
+    <% if product.discount_percentage.positive? %><span class="discount-badge"><%= product.discount_percentage %>% OFF</span><% end %>
+  <% end %>
+  <div class="product-details">
+    <%= link_to product.title, product_path(product), class: "product-title" %>
+    <div><span class="price"><%= brl(product.price) %></span>
+      <% if product.original_price.present? %><span class="old-price"><%= brl(product.original_price) %></span><% end %>
+    </div>
+    <% if product.discount_percentage.positive? %><span class="green"><%= product.discount_percentage %>% OFF</span><% end %>
+    <p class="shipping">Frete grátis</p>
+  </div>
+</article>

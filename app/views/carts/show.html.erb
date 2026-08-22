@@ -1,0 +1,21 @@
+<section class="shell cart-page">
+  <h1>Seu carrinho</h1>
+  <% if @cart_items.any? %>
+    <div class="cart-layout">
+      <div class="cart-items">
+        <% @cart_items.each do |item| %>
+          <article class="cart-item">
+            <% if item[:product].image_url.present? %><img src="<%= item[:product].image_url %>" alt=""><% end %>
+            <div><%= link_to item[:product].title, product_path(item[:product]), class: "product-title" %><p class="shipping">Frete grátis</p></div>
+            <%= form_with url: update_cart_path, method: :patch, class: "quantity-form" do |form| %><%= form.hidden_field :product_id, value: item[:product].id %><%= form.number_field :quantity, value: item[:quantity], min: 0, max: item[:product].stock %><%= form.submit "Atualizar" %><% end %>
+            <strong class="cart-price"><%= brl(item[:product].price * item[:quantity]) %></strong>
+            <%= button_to "Remover", remove_cart_path(product_id: item[:product].id), method: :delete, class: "remove-button" %>
+          </article>
+        <% end %>
+      </div>
+      <aside class="summary"><h2>Resumo da compra</h2><div><span>Produtos</span><strong><%= brl(@cart_items.sum { |item| item[:product].price * item[:quantity] }) %></strong></div><div class="summary-total"><span>Total</span><strong><%= brl(@cart_items.sum { |item| item[:product].price * item[:quantity] }) %></strong></div><%= button_to "Continuar compra", checkout_cart_path, method: :post, class: "primary-button full-button" %><p>♙ Compra protegida</p></aside>
+    </div>
+  <% else %>
+    <div class="empty-state"><div class="empty-icon">🛒</div><h2>Seu carrinho está vazio</h2><p>Descubra produtos incríveis e adicione-os aqui.</p><%= link_to "Ver produtos", products_path, class: "primary-button" %></div>
+  <% end %>
+</section>

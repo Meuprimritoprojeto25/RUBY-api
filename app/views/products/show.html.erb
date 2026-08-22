@@ -1,0 +1,24 @@
+<section class="shell product-page">
+  <div class="breadcrumb"><%= link_to "Início", root_path %> / <%= link_to @product.category.name, category_path(@product.category.slug) %> / <%= @product.title %></div>
+  <div class="product-show-grid">
+    <div class="product-gallery"><% if @product.image_url.present? %><img src="<%= @product.image_url %>" alt="<%= @product.title %>"><% end %></div>
+    <aside class="buy-box">
+      <p class="condition">Novo · <%= @product.stock.positive? ? "#{@product.stock} disponíveis" : "sem estoque" %></p>
+      <h1><%= @product.title %></h1>
+      <p class="seller">Vendido por <strong><%= @product.seller.username %></strong></p>
+      <div class="show-price"><%= brl(@product.price) %></div>
+      <% if @product.discount_percentage.positive? %><p class="green"><%= @product.discount_percentage %>% OFF · em até 10x sem juros</p><% end %>
+      <p class="shipping shipping-box">🚚 Frete grátis para todo o Brasil</p>
+      <% if @product.stock.positive? %>
+        <%= form_with url: add_cart_path, class: "buy-form" do |form| %>
+          <%= form.hidden_field :product_id, value: @product.id %>
+          <label>Quantidade <%= form.number_field :quantity, value: 1, min: 1, max: @product.stock %></label>
+          <%= form.submit "Adicionar ao carrinho", class: "primary-button full-button" %>
+        <% end %>
+      <% else %><p class="out-of-stock">Produto indisponível no momento.</p><% end %>
+      <p class="protected">♙ Compra protegida, receba o produto que está esperando ou devolvemos o dinheiro.</p>
+    </aside>
+  </div>
+  <div class="description-card"><h2>Descrição</h2><p><%= @product.description %></p></div>
+  <% if @related_products.any? %><div class="section-heading"><h2>Quem viu este produto também comprou</h2></div><div class="product-grid"><%= render partial: "card", collection: @related_products, as: :product %></div><% end %>
+</section>
