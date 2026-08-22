@@ -27,8 +27,11 @@ visual responsiva. A API de leitura está disponível em `GET /api/listings`.
 O `Procfile` inicia o Puma com `config/puma.rb`, que usa `PORT` quando ela for
 fornecida pelo ambiente de publicação e faz bind em `0.0.0.0`. A aplicação fixa
 explicitamente Sinatra 3.2.0, Rack 2.2.10 e Rack Protection 3.2.0 no `Gemfile`
-e no lockfile. Essa linha estável do Rack já fornece o
-executável `rackup`, portanto plataformas que iniciam um `config.ru` com
+e no lockfile. O `base64` 0.2.0 também é declarado diretamente: ele é usado
+pela sessão de cookie e torna a resolução compatível com o Bundler 2.3 mesmo
+quando o índice compacto retorna metadados adicionais de `rack-session`. Essa
+linha estável do Rack já fornece o executável `rackup`, portanto plataformas
+que iniciam um `config.ru` com
 `bundle exec rackup` e plataformas que usam o `Procfile` encontram o mesmo
 runtime sem depender dos metadados inconsistentes das gems auxiliares do Rack
 3/Sinatra 4 no Bundler 2.3 do preview.

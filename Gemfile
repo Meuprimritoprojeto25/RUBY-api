@@ -13,6 +13,11 @@ gem "puma", "~> 6.0"
 # Rack 3 companion gems and their incompatible compact-index metadata.
 gem "rack", "2.2.10"
 gem "rack-protection", "3.2.0"
+# Declare the Rack cookie-session encoding dependency at the application
+# boundary. Besides making the runtime dependency explicit, this prevents
+# Bundler 2.3 compact-index metadata from rejecting a cached Rack-session
+# specification that asks for base64 during a clean preview build.
+gem "base64", "0.2.0"
 gem "activerecord", "~> 7.1"
 gem "sqlite3", "~> 1.7"
 gem "bcrypt", "~> 3.1"
