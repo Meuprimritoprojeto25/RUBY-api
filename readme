@@ -36,6 +36,10 @@ Bundler 2.3 com um índice compacto que retornou metadados incompatíveis para
 essas duas gems, interrompendo `bundle install` antes de o servidor iniciar.
 As rotas, templates ERB, autenticação, carrinho, checkout e persistência foram
 preservados no adaptador Rack, sem substituir a aplicação por conteúdo estático.
+O manifesto também declara explicitamente `benchmark`, `logger` e
+`securerandom`: são dependências de runtime do Active Support 7.1 e essa
+declaração evita que o Bundler 2.3 rejeite o lockfile quando o índice compacto
+omitir esses metadados.
 
 Na primeira inicialização, a aplicação cria automaticamente o banco SQLite em
 `db/marketplace.sqlite3`, executa as migrações e, com `DASHBOARDIA_DEMO_MODE=true`, cria

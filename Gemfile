@@ -14,3 +14,12 @@ gem "rack", "2.2.11", require: false
 gem "activerecord", "~> 7.1"
 gem "sqlite3", "~> 1.7"
 gem "bcrypt", "~> 3.1"
+
+# Rails 7.1 declares these as runtime dependencies of Active Support. The
+# preview's Bundler 2.3 uses a compact-index response that omits them from its
+# initial metadata, then rejects an otherwise valid lockfile after downloading
+# the gem. Keeping the real runtime requirements explicit makes installation
+# deterministic without changing the application stack.
+gem "benchmark", "0.4.1", require: false
+gem "logger", "1.6.0", require: false
+gem "securerandom", "0.4.1", require: false
