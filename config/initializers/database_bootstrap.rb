@@ -14,12 +14,14 @@ module Marketplace
       # SQLite creates its file on connect, but not its parent directory.
       FileUtils.mkdir_p(File.dirname(database)) if configuration[:adapter] == "sqlite3" && database.present?
 
-      pool = ActiveRecord::Base.connection_pool
-      ActiveRecord::MigrationContext.new(
-        Rails.root.join("db/migrate"),
-        ActiveRecord::SchemaMigration.new(pool),
-        ActiveRecord::InternalMetadata.new(pool)
-      ).migrate
+      # SchemaMigration and InternalMetadata have changed their constructor
+      # dependency from a connection to a connection pool between supported
+      # Active Record releases. Let MigrationContext create those internal
+      # collaborators so it uses the API that matches the installed Rails
+      # version. Establishing the connection here also happens only after the
+      # SQLite parent directory has been created.
+      ActiveRecord::Base.connection
+      ActiveRecord::MigrationContext.new([Rails.root.join("db/migrate")]).migrate
     end
   end
 end
