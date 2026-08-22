@@ -1,1 +1,78 @@
+# Vitrine Livre — marketplace Ruby
 
+Aplicação web executável de marketplace, inspirada na experiência de navegação de grandes
+sites de compra e venda. Ela oferece vitrine de produtos, busca, categorias, detalhe do
+anúncio, carrinho, cadastro/login, checkout transacional, histórico de compras e publicação
+de anúncios.
+
+## Requisitos
+
+- Ruby 3.1 ou superior
+- Bundler
+
+## Inicialização local
+
+```bash
+bundle install
+DASHBOARDIA_DEMO_MODE=true \
+DASHBOARDIA_DEMO_USERNAME=admin \
+DASHBOARDIA_DEMO_EMAIL=admin@vitrine.local \
+DASHBOARDIA_DEMO_PASSWORD=admin12345 \
+bundle exec puma
+```
+
+Abra `http://localhost:9292`. A rota `/` é a vitrine principal, preparada para validação
+visual responsiva. A API de leitura está disponível em `GET /api/listings`.
+
+O `Procfile` inicia o Puma com `config/puma.rb`, que usa `PORT` quando ela for
+fornecida pelo ambiente de publicação e faz bind em `0.0.0.0`. A camada HTTP é
+implementada diretamente sobre o Rack 2.2.11 e o `config.ru` monta a sessão de
+cookie e os arquivos públicos antes da aplicação. O Rack 2 já fornece o
+executável `rackup`, portanto tanto plataformas que iniciam um `config.ru`
+quanto plataformas que usam o `Procfile` encontram o mesmo runtime.
+
+Essa escolha elimina Sinatra e Rack Protection do bundle. O preview utiliza
+Bundler 2.3 com um índice compacto que retornou metadados incompatíveis para
+essas duas gems, interrompendo `bundle install` antes de o servidor iniciar.
+As rotas, templates ERB, autenticação, carrinho, checkout e persistência foram
+preservados no adaptador Rack, sem substituir a aplicação por conteúdo estático.
+
+Na primeira inicialização, a aplicação cria automaticamente o banco SQLite em
+`db/marketplace.sqlite3`, executa as migrações e, com `DASHBOARDIA_DEMO_MODE=true`, cria
+uma conta administrativa e produtos demonstrativos. O acesso administrativo usa exatamente
+os valores de `DASHBOARDIA_DEMO_USERNAME`, `DASHBOARDIA_DEMO_EMAIL` e
+`DASHBOARDIA_DEMO_PASSWORD` (os valores do exemplo acima são os defaults de desenvolvimento).
+Nesse modo também é gerado `.dashboardia/demo-access.json` com `{"version":1}`.
+
+Para criar ou atualizar somente a massa demonstrativa manualmente:
+
+```bash
+bundle exec ruby db/seed.rb
+```
+
+> A execução manual do seed também é idempotente. Em modo demonstrativo, ela não é
+> necessária porque a carga acontece durante o bootstrap.
+
+## Configuração
+
+| Variável | Finalidade | Padrão |
+| --- | --- | --- |
+| `DATABASE_URL` | URL Active Record (SQLite por padrão) | `sqlite3:db/marketplace.sqlite3` |
+| `DASHBOARDIA_DEMO_MODE` | Ativa admin, catálogo demo e marcador de acesso | desativado |
+| `DASHBOARDIA_DEMO_USERNAME` | Usuário administrador demo | `admin` |
+| `DASHBOARDIA_DEMO_EMAIL` | E-mail administrador demo | `admin@vitrine.local` |
+| `DASHBOARDIA_DEMO_PASSWORD` | Senha administrador demo | `admin12345` |
+| `SESSION_SECRET` | Material do segredo da sessão em produção | segredo local de desenvolvimento |
+| `AUTO_MIGRATE` | Executa migrações na inicialização | `true` |
+
+O valor de `SESSION_SECRET` é derivado com SHA-512 e passado diretamente ao
+`Rack::Session::Cookie`. A derivação hexadecimal produz 128 bytes e aceita com segurança
+previews sem essa variável ou com um valor legado curto. Em produção, configure
+uma variável exclusiva, longa e aleatória.
+
+## Persistência
+
+As migrações ficam em `db/migrate`; o modelo relacional contém usuários, categorias,
+anúncios, pedidos e itens de pedido. Chaves estrangeiras, índices únicos e restrições de
+preço, estoque, condição e status são aplicados no banco. Os timestamps de auditoria são
+centralizados no `ApplicationRecord`.

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Vitrine Livre, o marketplace para descobrir, comprar e vender.">
+    <title><%= @title ? "#{h(@title)} · Vitrine Livre" : "Vitrine Livre" %></title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar__main wrap">
+        <a class="brand" href="/" aria-label="Vitrine Livre, início"><span>vitrine</span>livre</a>
+        <form class="search" action="/" method="get" role="search">
+          <input name="q" value="<%= h(@query) %>" placeholder="Buscar produtos, marcas e muito mais…" aria-label="Buscar">
+          <button type="submit" aria-label="Buscar">⌕</button>
+        </form>
+        <nav class="account-nav" aria-label="Conta">
+          <% if signed_in? %>
+            <span class="hello">Olá, <strong><%= h(current_user.username) %></strong></span>
+            <a href="/minhas-compras">Compras</a>
+            <form action="/sair" method="post"><button class="link-button" type="submit">Sair</button></form>
+          <% else %>
+            <a href="/criar-conta">Crie a sua conta</a>
+            <a href="/entrar">Entre</a>
+          <% end %>
+          <a class="cart-link" href="/carrinho" aria-label="Carrinho com <%= cart_count %> itens">🛒 <span><%= cart_count %></span></a>
+        </nav>
+      </div>
+      <div class="topbar__sub wrap">
+        <span class="delivery">⌖ Informe seu CEP</span>
+        <a href="/categoria/tecnologia">Tecnologia</a>
+        <a href="/categoria/casa-e-decoracao">Casa e decoração</a>
+        <a href="/categoria/moda">Moda</a>
+        <a href="/vender" class="sell-link">Vender</a>
+      </div>
+    </header>
+
+    <% if @flash %>
+      <div class="wrap flash flash--<%= h(@flash[:type]) %>" role="status"><%= h(@flash[:message]) %></div>
+    <% end %>
+    <main><%= @view_content %></main>
+    <footer>
+      <div class="wrap footer-grid">
+        <div><strong>Vitrine Livre</strong><p>Um marketplace simples para comprar e vender com confiança.</p></div>
+        <div><strong>Compra protegida</strong><p>Seu pedido fica registrado antes da confirmação.</p></div>
+        <div><strong>Venda sem complicação</strong><p>Publique seu produto em poucos passos.</p></div>
+      </div>
+      <p class="copyright">© <%= Time.now.year %> Vitrine Livre · Projeto demonstrativo</p>
+    </footer>
+  </body>
+</html>

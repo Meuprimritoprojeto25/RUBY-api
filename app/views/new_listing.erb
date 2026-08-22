@@ -1,0 +1,18 @@
+<% @title = "Vender um produto" %>
+<section class="wrap form-page">
+  <div class="page-header page-header--compact"><p class="breadcrumb"><a href="/">Início</a> / Vender</p><h1>Publique seu produto</h1><p>Preencha os dados para colocar seu anúncio no ar.</p></div>
+  <div class="listing-form-card">
+    <% if @listing.errors.any? %><div class="form-error"><strong>Não foi possível publicar:</strong><ul><% @listing.errors.full_messages.each do |message| %><li><%= h(message) %></li><% end %></ul></div><% end %>
+    <form action="/vender" method="post" class="form-stack">
+      <label>Título do anúncio<input name="title" required maxlength="120" value="<%= h(@listing.title) %>" placeholder="Ex.: Câmera digital em ótimo estado"></label>
+      <label>Categoria<select name="category_id" required><option value="">Selecione uma categoria</option><% category_options.each do |category| %><option value="<%= category.id %>" <%= "selected" if @listing.category_id == category.id %>><%= h(category.name) %></option><% end %></select></label>
+      <div class="form-row"><label>Preço (R$)<input name="price" required inputmode="decimal" value="<%= @listing.price_cents ? format('%.2f', @listing.price_cents / 100.0).tr('.', ',') : '' %>" placeholder="0,00"></label><label>Estoque<input name="stock" required type="number" min="0" value="<%= h(@listing.stock) %>"></label></div>
+      <label>Condição<select name="condition"><% Listing::CONDITIONS.each do |condition| %><option value="<%= condition %>" <%= "selected" if @listing.condition == condition %>><%= condition_label(condition) %></option><% end %></select></label>
+      <label>Localização<input name="location" required value="<%= h(@listing.location) %>" placeholder="Cidade, UF"></label>
+      <label>URL da imagem <small>(opcional)</small><input name="image_url" type="url" value="<%= h(@listing.image_url) %>" placeholder="https://"></label>
+      <label>Descrição<textarea name="description" required maxlength="2000" rows="6" placeholder="Conte detalhes importantes sobre o produto."><%= h(@listing.description) %></textarea></label>
+      <label class="checkbox-label"><input name="featured" value="1" type="checkbox" <%= "checked" if @listing.featured %>> Destacar este anúncio na página inicial</label>
+      <button class="button" type="submit">Publicar anúncio</button>
+    </form>
+  </div>
+</section>

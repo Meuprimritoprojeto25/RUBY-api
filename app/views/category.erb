@@ -1,0 +1,20 @@
+<% @title = @category.name %>
+<section class="page-header wrap">
+  <p class="breadcrumb"><a href="/">Início</a> / Categorias / <%= h(@category.name) %></p>
+  <h1><%= h(@category.name) %></h1>
+  <p>Confira anúncios disponíveis nesta categoria.</p>
+</section>
+<section class="wrap listings-section section-topless">
+  <% if @listings.any? %>
+    <div class="listing-grid">
+      <% @listings.each do |listing| %>
+        <article class="product-card">
+          <a href="/anuncios/<%= listing.id %>" class="product-card__image"><img src="<%= h(listing_image(listing)) %>" alt="<%= h(listing.title) %>"></a>
+          <div class="product-card__body"><p class="price"><%= money(listing.price_cents) %></p><p class="installments">em até 10x sem juros</p><a href="/anuncios/<%= listing.id %>" class="product-title"><%= h(listing.title) %></a><p class="shipping">Frete grátis</p></div>
+        </article>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="empty-state"><h3>Ainda não há anúncios aqui</h3><p>Volte em breve ou seja a primeira pessoa a vender nesta categoria.</p><a href="/vender" class="button">Criar anúncio</a></div>
+  <% end %>
+</section>

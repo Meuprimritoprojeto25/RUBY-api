@@ -1,0 +1,9 @@
+<% @title = "Minhas compras" %>
+<section class="wrap narrow-page">
+  <div class="page-header page-header--compact"><p class="breadcrumb"><a href="/">Início</a> / Minhas compras</p><h1>Minhas compras</h1></div>
+  <% if @orders.any? %>
+    <div class="orders-list"><% @orders.each do |order| %><article class="order-card"><div><span class="order-status"><%= h(order.status == "pending" ? "Aguardando confirmação" : order.status.capitalize) %></span><h2>Pedido #<%= order.id %></h2><p><%= order.created_at.strftime("%d/%m/%Y") %> · <%= order.order_items.sum(:quantity) %> item(ns)</p></div><div><strong><%= money(order.total_cents) %></strong><ul><% order.order_items.each do |item| %><li><%= h(item.listing.title) %> × <%= item.quantity %></li><% end %></ul></div></article><% end %></div>
+  <% else %>
+    <div class="empty-state"><h2>Você ainda não fez compras</h2><p>Quando finalizar um pedido, ele aparecerá aqui.</p><a href="/" class="button">Encontrar produtos</a></div>
+  <% end %>
+</section>

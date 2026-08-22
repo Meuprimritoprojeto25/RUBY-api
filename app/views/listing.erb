@@ -1,0 +1,24 @@
+<% @title = @listing.title %>
+<section class="wrap product-page">
+  <p class="breadcrumb"><a href="/">Início</a> / <a href="/categoria/<%= h(@listing.category.slug) %>"><%= h(@listing.category.name) %></a> / <%= h(@listing.title) %></p>
+  <div class="product-detail">
+    <div class="product-gallery"><img src="<%= h(listing_image(@listing)) %>" alt="<%= h(@listing.title) %>"></div>
+    <aside class="purchase-panel">
+      <p class="condition"><%= condition_label(@listing.condition) %> · <%= @listing.stock %> disponível<%= @listing.stock == 1 ? "" : "is" %></p>
+      <h1><%= h(@listing.title) %></h1>
+      <p class="detail-price"><%= money(@listing.price_cents) %></p>
+      <p class="installments">em até 10x de <%= money((@listing.price_cents / 10.0).ceil) %> sem juros</p>
+      <p class="shipping shipping--large">✓ Frete grátis para todo o Brasil</p>
+      <% if @listing.available? %>
+        <form action="/carrinho/<%= @listing.id %>" method="post">
+          <label class="quantity-label">Quantidade <select name="quantity"><% 1.upto([@listing.stock, 5].min) do |quantity| %><option value="<%= quantity %>"><%= quantity %> unidade<%= quantity == 1 ? "" : "s" %></option><% end %></select></label>
+          <button class="button button--wide" type="submit">Adicionar ao carrinho</button>
+        </form>
+      <% else %>
+        <p class="sold-out">Produto indisponível</p>
+      <% end %>
+      <div class="seller-card"><span class="seller-avatar"><%= h(@listing.seller.username[0].upcase) %></span><div><small>Vendido por</small><strong><%= h(@listing.seller.username) %></strong><span>Mercado líder</span></div></div>
+    </aside>
+  </div>
+  <article class="description-card"><h2>Descrição</h2><p><%= h(@listing.description) %></p><p class="muted">Localização do vendedor: <%= h(@listing.location) %></p></article>
+</section>
