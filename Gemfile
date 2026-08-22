@@ -10,8 +10,9 @@ gem "sinatra", "3.2.0"
 gem "puma", "~> 6.0"
 # Keep the Rack 2 line explicit. It ships the `rackup` executable used by
 # preview providers to boot config.ru applications, avoiding the separate
-# Rack 3 companion gems and their incompatible compact-index metadata.
-gem "rack", "2.2.10"
+# Rack 3 companion gems and their incompatible compact-index metadata. The
+# lower bound mirrors Sinatra and rack-protection's published gemspecs.
+gem "rack", ">= 2.2.4", "~> 2.2"
 gem "rack-protection", "3.2.0"
 # Declare the Rack cookie-session encoding dependency at the application
 # boundary. Besides making the runtime dependency explicit, this prevents
