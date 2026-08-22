@@ -28,6 +28,9 @@ O `Procfile` inicia o Puma com `config/puma.rb`, que usa `PORT` quando ela for
 fornecida pelo ambiente de publicação e faz bind em `0.0.0.0`. O `rackup` também
 é uma dependência explícita: isso mantém o `config.ru` inicializável em
 plataformas que escolhem esse comando automaticamente com Rack 3.
+O `Gemfile.lock` versiona essa dependência e seu executável junto com as demais
+gems de execução, para que uma publicação limpa instale o `rackup` antes de
+iniciar o processo web.
 
 Na primeira inicialização, a aplicação cria automaticamente o banco SQLite em
 `db/marketplace.sqlite3`, executa as migrações e, com `DASHBOARDIA_DEMO_MODE=true`, cria
