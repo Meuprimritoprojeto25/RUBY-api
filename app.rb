@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "securerandom"
+require "openssl"
 require "sinatra/base"
 require "sequel"
 # Sequel keeps migrations as an opt-in extension. Load it through Sequel's
@@ -30,8 +31,8 @@ class MercadoPulseApp < Sinatra::Base
     # Passing the cookie options directly to Sinatra is important here.  A
     # boolean `sessions` setting leaves the cookie middleware configuration to
     # framework defaults, which can result in a new session for the form POST
-    # behind a preview proxy.  The cart and its CSRF token must use the same
-    # signed browser session on the page render and on the add-to-cart POST.
+    # behind a preview proxy. The cart itself must use the same signed browser
+    # session on the page render and on the add-to-cart POST.
     set :sessions,
         key: "mercado_pulse.session",
         secret: session_secret,
@@ -56,12 +57,30 @@ class MercadoPulseApp < Sinatra::Base
       format("R$ %<whole>d,%<fraction>02d", whole: cents / 100, fraction: cents % 100)
     end
 
+    # Do not bind form tokens to the cart session. The preview runs through a
+    # reverse proxy which can discard/reissue a session cookie between the GET
+    # that renders a form and its POST. That previously made a legitimate
+    # add-to-cart form fail with a 403 before the cart route was reached.
+    #
+    # This opaque token is signed with the server-only session secret instead.
+    # It remains verifiable across requests and application workers while
+    # still preventing a third-party site from manufacturing a valid form
+    # submission.
     def csrf_token
-      session[:csrf_token] ||= SecureRandom.hex(32)
+      OpenSSL::HMAC.hexdigest(
+        "SHA256",
+        settings.session_secret,
+        "mercado-pulse-csrf-form-v1"
+      )
     end
 
     def csrf_field
       %(<input type="hidden" name="csrf_token" value="#{h(csrf_token)}">)
+    end
+
+    def valid_csrf_token?(submitted_token)
+      submitted_token.bytesize == csrf_token.bytesize &&
+        Rack::Utils.secure_compare(csrf_token, submitted_token)
     end
 
     def cart
@@ -122,7 +141,7 @@ class MercadoPulseApp < Sinatra::Base
     protected_path = request.path_info.match?(%r{\A/(?:carrinho|checkout|pedidos)(?:/|\z)})
     if request.post? && protected_path
       submitted_token = params["csrf_token"].to_s
-      halt 403, "Solicitação inválida." unless Rack::Utils.secure_compare(csrf_token, submitted_token)
+      halt 403, "Solicitação inválida." unless valid_csrf_token?(submitted_token)
     end
   end
 
