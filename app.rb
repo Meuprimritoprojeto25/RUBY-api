@@ -103,14 +103,16 @@ class MercadoPulseApp < Sinatra::Base
   before do
     response.headers["X-Frame-Options"] = "SAMEORIGIN"
     response.headers["X-Content-Type-Options"] = "nosniff"
-  end
 
-  # Mustermann (used by Sinatra 4) anchors route regular expressions itself;
-  # explicit ^/$ anchors are rejected during application boot. This pattern
-  # covers the checkout endpoints and their nested action paths.
-  before %r{/(?:carrinho|checkout|pedidos)(?:/.*)?} do
-    next unless request.post?
-    halt 403, "Solicitação inválida." unless Rack::Utils.secure_compare(csrf_token, params["csrf_token"].to_s)
+    # Do this check from the common filter instead of registering a regular
+    # expression filter with Mustermann. Besides avoiding route compiler
+    # differences between Sinatra releases, this protects every cart action,
+    # including /carrinho/adicionar/:id.
+    protected_path = request.path_info.match?(%r{\A/(?:carrinho|checkout|pedidos)(?:/|\z)})
+    if request.post? && protected_path
+      submitted_token = params["csrf_token"].to_s
+      halt 403, "Solicitação inválida." unless Rack::Utils.secure_compare(csrf_token, submitted_token)
+    end
   end
 
   get "/" do
@@ -156,10 +158,20 @@ class MercadoPulseApp < Sinatra::Base
     product = DB[:products].where(id: params[:id], active: true).first
     halt 404, "Produto não encontrado." unless product
 
+    if product[:stock].zero?
+      session[:flash] = "#{product[:title]} está sem estoque no momento."
+      redirect params["return_to"].to_s.start_with?("/") ? params["return_to"] : "/produtos/#{product[:slug]}"
+    end
+
     desired_quantity = [params.fetch("quantity", "1").to_i, 1].max
     existing_quantity = cart.fetch(product[:id].to_s, 0).to_i
-    cart[product[:id].to_s] = [existing_quantity + desired_quantity, product[:stock]].min
-    session[:flash] = "#{product[:title]} foi adicionado ao carrinho."
+    new_quantity = [existing_quantity + desired_quantity, product[:stock]].min
+    cart[product[:id].to_s] = new_quantity
+    session[:flash] = if new_quantity == existing_quantity
+                        "Você já tem a quantidade disponível de #{product[:title]} no carrinho."
+                      else
+                        "#{product[:title]} foi adicionado ao carrinho."
+                      end
     redirect params["return_to"].to_s.start_with?("/") ? params["return_to"] : "/carrinho"
   end
 
