@@ -1,11 +1,12 @@
 # Dashboardia Ruby API
 
-Dashboardia is a small, executable project-and-task service built with Ruby,
+Dashboardia is an executable project-and-task service built with Ruby,
 Sinatra, Active Record, SQLite, and Puma. It provides a live visual overview
-at `/` and a versioned JSON API at `/api/v1`. The application is intentionally
-usable with a brand-new database: its startup process creates the SQLite
-directory, applies pending migrations, and only loads sample records when demo
-mode is explicitly enabled.
+at `/`, a browser workspace for creating projects and tasks, and a versioned
+JSON API at `/api/v1`. The application is intentionally usable with a
+brand-new database: its startup process creates the SQLite directory, applies
+pending migrations, and only loads sample records when demo mode is explicitly
+enabled.
 
 ## Requirements
 
@@ -27,6 +28,22 @@ instead of failing when no records exist.
 startup. The seed is idempotent, so restarts do not duplicate records. Demo
 mode does not create credentials because this service has no authentication
 layer.
+
+## Browser workspace
+
+The dashboard includes working navigation and server-rendered forms, so it is
+possible to use the service without an API client:
+
+- `/projects` lists and filters persisted projects;
+- `/projects/new` creates a project;
+- `/projects/:id` displays project tasks, adds a task, and marks a task done.
+
+Form writes use the same Active Record models and database constraints as the
+JSON API. Public preview deployments commonly use a gateway hostname that is
+not known at build time. The application keeps Rack's request protections on
+while excluding only host authorization, preventing those valid dashboard
+links and redirects from being rejected with `403 Forbidden` by an internal
+hostname allowlist.
 
 Useful environment variables:
 
