@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Vendah — compre e venda produtos com segurança.">
+    <title>Vendah — tudo o que você procura</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <div class="top-strip">
+      <div class="container strip-content">
+        <span>Venda no Vendah</span>
+        <span>Ajuda</span>
+        <span>Baixe o app</span>
+      </div>
+    </div>
+    <header class="site-header">
+      <div class="container header-main">
+        <a class="brand" href="/" aria-label="Vendah início"><span class="brand-mark">v</span><span>vendah</span></a>
+        <div class="search-wrap">
+          <input id="search" type="search" placeholder="Buscar produtos, marcas e muito mais..." autocomplete="off">
+          <button id="search-button" aria-label="Buscar"><span>⌕</span></button>
+        </div>
+        <div class="header-actions">
+          <button class="account-action" id="account-button"><span class="action-icon">♙</span><span><small id="account-kicker">Olá, visitante</small><strong id="account-label">Entre ou cadastre-se</strong></span><b>⌄</b></button>
+          <button class="cart-action" id="cart-button" aria-label="Abrir carrinho"><span>🛒</span><i id="cart-count">0</i></button>
+        </div>
+      </div>
+      <nav class="container category-nav" aria-label="Categorias">
+        <button class="category-trigger" data-category="">☰ &nbsp;Todas as categorias</button>
+        <button data-category="celulares">Celulares e Telefones</button>
+        <button data-category="informatica">Informática</button>
+        <button data-category="eletronicos">Eletrônicos</button>
+        <button data-category="casa">Casa e Decoração</button>
+        <button data-category="moda">Moda</button>
+        <button data-category="esportes">Esportes</button>
+        <button class="sell-link" id="sell-button">Anunciar produto <span>→</span></button>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero container">
+        <div class="hero-copy">
+          <p class="eyebrow">O seu próximo achado está aqui</p>
+          <h1>Compre bem.<br><em>Viva melhor.</em></h1>
+          <p>Milhares de produtos, ofertas incríveis e a segurança que você precisa para comprar sem preocupação.</p>
+          <button class="primary-button" id="hero-explore">Explorar ofertas <span>→</span></button>
+          <div class="hero-proof"><span class="avatars">● ● ●</span><strong>+2 milhões</strong> de compradores felizes</div>
+        </div>
+        <div class="hero-art" aria-label="Ofertas em destaque">
+          <div class="shape shape-back"></div>
+          <div class="shape shape-front"></div>
+          <div class="floating-card floating-top"><span>⚡</span><div><b>Ofertas relâmpago</b><small>Até 60% OFF</small></div></div>
+          <div class="phone-art"><div class="phone-screen"><span>vendah</span><div class="screen-product">⌁</div><b>Seu novo favorito</b><small>chega rapidinho</small></div></div>
+          <div class="floating-card floating-bottom"><span class="check">✓</span><div><b>Compra protegida</b><small>Você sempre seguro</small></div></div>
+        </div>
+      </section>
+
+      <section class="benefits container">
+        <div><span class="benefit-icon blue">♢</span><p><strong>Compra protegida</strong><small>Seu dinheiro seguro até receber</small></p></div>
+        <div><span class="benefit-icon green">⚡</span><p><strong>Envio rápido</strong><small>Receba seus pedidos sem esperar</small></p></div>
+        <div><span class="benefit-icon purple">↻</span><p><strong>Devolução grátis</strong><small>Não gostou? Devolva sem custo</small></p></div>
+        <div><span class="benefit-icon orange">♧</span><p><strong>Vendedores confiáveis</strong><small>Milhares de lojas verificadas</small></p></div>
+      </section>
+
+      <section class="catalog container" id="catalog">
+        <aside class="filters">
+          <div class="filter-heading"><h2>Comprar por</h2><button id="clear-filters">Limpar</button></div>
+          <div class="filter-group">
+            <h3>Categorias</h3>
+            <label><input type="radio" name="category" value="" checked> Todas <span id="all-count"></span></label>
+            <div id="category-filters"></div>
+          </div>
+          <div class="filter-group">
+            <h3>Faixa de preço</h3>
+            <div class="price-inputs"><input id="min-price" type="number" min="0" placeholder="mínimo"><span>até</span><input id="max-price" type="number" min="0" placeholder="máximo"></div>
+            <button class="apply-price" id="apply-price">Aplicar</button>
+          </div>
+          <div class="filter-group rating-filter"><h3>Avaliação</h3><label><input type="checkbox"> <span class="stars">★★★★★</span> e mais</label><label><input type="checkbox"> <span class="stars">★★★★</span><span class="star-muted">★</span> e mais</label></div>
+          <div class="secure-note"><span>♧</span><p><strong>Compre com tranquilidade</strong><small>A gente cuida de tudo para você.</small></p></div>
+        </aside>
+        <div class="results">
+          <div class="results-head"><div><p class="section-kicker">Seleção para você</p><h2 id="results-title">Ofertas em destaque <span id="result-total"></span></h2></div><label class="sort-label">Ordenar por <select id="sort"><option value="relevance">Mais relevantes</option><option value="price_asc">Menor preço</option><option value="price_desc">Maior preço</option></select></label></div>
+          <div class="active-filters" id="active-filters"></div>
+          <div class="product-grid" id="product-grid"><div class="loading"><span></span><span></span><span></span><p>Encontrando os melhores produtos...</p></div></div>
+          <div class="empty-state" id="empty-state" hidden><div>⌕</div><h3>Nada encontrado por aqui</h3><p>Tente buscar por outro termo ou limpar os filtros.</p><button class="secondary-button" id="empty-clear">Ver todos os produtos</button></div>
+        </div>
+      </section>
+    </main>
+    <footer><div class="container footer-content"><a class="brand" href="/"><span class="brand-mark">v</span><span>vendah</span></a><p>Um jeito mais simples de encontrar o que você ama.</p><small>© 2024 Vendah. Feito para comprar melhor.</small></div></footer>
+
+    <div class="modal-backdrop" id="product-modal" hidden><div class="modal product-modal"><button class="close-modal">×</button><div id="product-detail"></div></div></div>
+    <div class="modal-backdrop" id="login-modal" hidden><div class="modal login-modal"><button class="close-modal">×</button><div class="login-brand"><span class="brand-mark">v</span><b>vendah</b></div><h2>Bem-vindo de volta</h2><p>Entre para acompanhar seus pedidos e comprar com segurança.</p><form id="login-form"><label>Usuário ou e-mail<input id="login-user" required autocomplete="username"></label><label>Senha<input id="login-password" type="password" required autocomplete="current-password"></label><button class="primary-button" type="submit">Entrar na minha conta</button><div class="form-message" id="login-message"></div></form></div></div>
+    <div class="modal-backdrop" id="cart-modal" hidden><div class="modal cart-modal"><button class="close-modal">×</button><h2>Seu carrinho <span id="cart-modal-count">0</span></h2><div id="cart-items"></div><div class="cart-footer"><div><small>Total</small><strong id="cart-total">R$ 0,00</strong></div><button class="primary-button" id="checkout-button">Continuar compra</button></div></div></div>
+    <div class="toast" id="toast"></div>
+    <script src="/app.js"></script>
+  </body>
+</html>

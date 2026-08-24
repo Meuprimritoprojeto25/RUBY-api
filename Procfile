@@ -1,0 +1,1 @@
+web: bundle exec rackup -p ${PORT:-4567} -o 0.0.0.0
