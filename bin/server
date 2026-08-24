@@ -1,0 +1,3 @@
+#!/usr/bin/env ruby
+
+exec "bundle", "exec", "puma", "-C", File.expand_path("../config/puma.rb", __dir__), File.expand_path("../config.ru", __dir__)
