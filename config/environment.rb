@@ -15,6 +15,7 @@ require_relative "../lib/database"
 require_relative "../app/models/application_record"
 require_relative "../app/models/project"
 require_relative "../app/models/task"
+require_relative "../app/models/activity_event"
 require_relative "../db/seeds"
 
 # Preparing here gives every executable entry point (Puma, rackup, and Rake)

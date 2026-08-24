@@ -11,6 +11,7 @@ module DemoData
       status: "active"
     )
     launch.save!
+    activity_for(launch, "project_created", "Demo project Product launch is ready.") if launch.activity_events.empty?
 
     operations = Project.find_or_initialize_by(code: "operations")
     operations.assign_attributes(
@@ -19,6 +20,7 @@ module DemoData
       status: "active"
     )
     operations.save!
+    activity_for(operations, "project_created", "Demo project Operations is ready.") if operations.activity_events.empty?
 
     upsert_task(
       launch,
@@ -48,8 +50,14 @@ module DemoData
 
   def upsert_task(project, title, attributes)
     task = project.tasks.find_or_initialize_by(title: title)
+    new_task = task.new_record?
     task.assign_attributes(attributes)
     task.save!
+    activity_for(project, "task_created", "Added task “#{task.title}”.", task: task) if new_task
   end
-  private_class_method :upsert_task
+
+  def activity_for(project, event_type, message, task: nil)
+    project.activity_events.create!(event_type: event_type, message: message, task: task)
+  end
+  private_class_method :upsert_task, :activity_for
 end

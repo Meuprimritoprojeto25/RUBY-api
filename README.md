@@ -2,8 +2,8 @@
 
 Dashboardia is an executable project-and-task service built with Ruby,
 Sinatra, Active Record, SQLite, and Puma. It provides a live visual overview
-at `/`, a browser workspace for creating projects and tasks, and a versioned
-JSON API at `/api/v1`. The application is intentionally usable with a
+at `/`, project and task workspaces, a persistent activity trail, and a
+versioned JSON API at `/api/v1`. The application is intentionally usable with a
 brand-new database: its startup process creates the SQLite directory, applies
 pending migrations, and only loads sample records when demo mode is explicitly
 enabled.
@@ -35,11 +35,17 @@ The dashboard includes working navigation and server-rendered forms, so it is
 possible to use the service without an API client:
 
 - `/projects` lists and filters persisted projects;
-- `/projects/new` creates a project;
-- `/projects/:id` displays project tasks, adds a task, and marks a task done.
+- `/projects/new` creates a project, while `/projects/:id/edit` updates it;
+- `/projects/:id` displays project tasks, adds a task, manages project status,
+  and offers safe browser deletion actions;
+- `/tasks` is a cross-project work queue with state and priority filters;
+- `/tasks/:id/edit` updates the task's scope, state, priority, or due date;
+- `/activity` displays a durable, project-scoped audit trail.
 
 Form writes use the same Active Record models and database constraints as the
-JSON API. Public preview deployments commonly use a gateway hostname that is
+JSON API. Browser forms include per-session authenticity tokens; JSON API
+clients are intentionally exempt from that browser-only token requirement.
+Public preview deployments commonly use a gateway hostname that is
 not known at build time. The application keeps Rack's request protections on
 while excluding only host authorization. Sinatra's implicit protection stack
 is disabled so it cannot add a second host allowlist; the explicitly
@@ -56,6 +62,7 @@ Useful environment variables:
 | `DATABASE_URL` | unset | SQLite URL, for example `sqlite3:/tmp/dashboardia.sqlite3` |
 | `DASHBOARDIA_DEMO_MODE` | unset | Set exactly to `true` to load demo data |
 | `DB_LOG` | unset | Set to `true` to write SQL logs to stdout |
+| `SESSION_SECRET` | generated on boot | Optional stable secret for browser form sessions |
 
 The convenience launcher is also available after dependencies are installed:
 
@@ -72,6 +79,7 @@ field-by-field error object; missing resources return `404`.
 | --- | --- | --- |
 | `GET` | `/health` | Liveness and database connectivity |
 | `GET` | `/api/v1/dashboard` | Aggregate project/task metrics |
+| `GET` | `/api/v1/activity` | Recent durable activity events |
 | `GET`, `POST` | `/api/v1/projects` | List or create projects |
 | `GET`, `PATCH`, `DELETE` | `/api/v1/projects/:id` | Read, edit, or remove a project |
 | `GET`, `POST` | `/api/v1/projects/:project_id/tasks` | List or create a project's tasks |
@@ -91,7 +99,7 @@ curl -X POST http://localhost:9292/api/v1/projects/1/tasks \
 
 Project statuses are `active`, `paused`, and `completed`. Task states are
 `todo`, `in_progress`, and `done`; priorities are `low`, `medium`, and
-`high`.
+`high`. The activity endpoint accepts an optional `project_id` query parameter.
 
 ## Database operations
 
@@ -106,4 +114,6 @@ bundle exec rake db:seed
 Audit fields (`created_at` and `updated_at`) are database-required and also
 assigned centrally by `ApplicationRecord` lifecycle callbacks. Model
 validations, foreign keys, unique indexes, and non-null schema constraints
-protect records created by the API, seed data, or future Ruby entry points.
+protect records created by the API, browser workspace, seed data, or future
+Ruby entry points. The activity-events migration is applied as part of the
+same clean-database bootstrap and its demo events are idempotent.

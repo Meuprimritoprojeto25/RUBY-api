@@ -2,6 +2,7 @@ class Project < ApplicationRecord
   STATUSES = %w[active paused completed].freeze
 
   has_many :tasks, dependent: :destroy, inverse_of: :project
+  has_many :activity_events, dependent: :destroy, inverse_of: :project
 
   validates :name, presence: true, length: { maximum: 120 }, uniqueness: { case_sensitive: false }
   validates :code, presence: true, length: { maximum: 24 },
