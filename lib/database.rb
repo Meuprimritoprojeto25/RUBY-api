@@ -47,11 +47,14 @@ module Database
     end
 
     def migration_context
-      pool = ActiveRecord::Base.connection_pool
+      # Active Record 7.1's migration metadata objects expect the adapter
+      # connection, not the connection pool. Passing the pool causes startup
+      # to fail when SchemaMigration calls `table_exists?`.
+      connection = ActiveRecord::Base.connection
       ActiveRecord::MigrationContext.new(
         [MIGRATIONS_PATH],
-        ActiveRecord::SchemaMigration.new(pool),
-        ActiveRecord::InternalMetadata.new(pool)
+        ActiveRecord::SchemaMigration.new(connection),
+        ActiveRecord::InternalMetadata.new(connection)
       )
     end
 
