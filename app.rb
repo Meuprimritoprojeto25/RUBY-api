@@ -206,7 +206,7 @@ module Marketplace
 
       db.transaction do
         salt, digest = Password.create(password)
-        db.execute(<<~SQL, username, email, digest, salt)
+        insert_user_sql = <<~SQL
           INSERT INTO users (username, email, password_digest, password_salt, role)
           VALUES (?, ?, ?, ?, 'admin')
           ON CONFLICT(username) DO UPDATE SET
@@ -216,6 +216,7 @@ module Marketplace
             role = 'admin',
             updated_at = CURRENT_TIMESTAMP
         SQL
+        db.execute(insert_user_sql, username, email, digest, salt)
 
         CATEGORIES.each do |slug, name|
           db.execute("INSERT INTO categories (slug, name) VALUES (?, ?) ON CONFLICT(slug) DO UPDATE SET name = excluded.name", slug, name)
@@ -223,8 +224,9 @@ module Marketplace
 
         PRODUCTS.each do |product|
           category_id = db.get_first_value("SELECT id FROM categories WHERE slug = ?", product[:category])
-          db.execute(<<~SQL, product.values_at(:slug, :title, :description, :price_cents, :old_price_cents,
-                                                 :condition, :location, :shipping, :stock, :badge, :image_url, category_id))
+          product_values = product.values_at(:slug, :title, :description, :price_cents, :old_price_cents,
+                                             :condition, :location, :shipping, :stock, :badge, :image_url, category_id)
+          product_sql = <<~SQL
             INSERT INTO products
               (slug, title, description, price_cents, old_price_cents, condition, location, shipping,
                stock, badge, image_url, category_id, status)
@@ -236,6 +238,7 @@ module Marketplace
               badge = excluded.badge, image_url = excluded.image_url, category_id = excluded.category_id,
               status = 'active', updated_at = CURRENT_TIMESTAMP
           SQL
+          db.execute(product_sql, product_values)
         end
       end
 
@@ -387,24 +390,26 @@ class MarketplaceApp < Sinatra::Base
             end
     where = clauses.join(" AND ")
     total = db.get_first_value("SELECT COUNT(*) FROM products p JOIN categories c ON c.id = p.category_id WHERE #{where}", values).to_i
-    rows = db.execute(<<~SQL, values + [per_page, (page - 1) * per_page])
+    products_sql = <<~SQL
       SELECT p.*, c.name AS category_name, c.slug AS category_slug
       FROM products p JOIN categories c ON c.id = p.category_id
       WHERE #{where}
       ORDER BY #{order}
       LIMIT ? OFFSET ?
     SQL
+    rows = db.execute(products_sql, values + [per_page, (page - 1) * per_page])
     json_response(products: rows.map { |row| product_json(row) }, pagination: {
       page: page, per_page: per_page, total: total, pages: (total.to_f / per_page).ceil
     })
   end
 
   get "/api/products/:id" do
-    row = db.get_first_row(<<~SQL, params["id"], params["id"])
+    product_sql = <<~SQL
       SELECT p.*, c.name AS category_name, c.slug AS category_slug
       FROM products p JOIN categories c ON c.id = p.category_id
       WHERE (p.id = ? OR p.slug = ?) AND p.status = 'active'
     SQL
+    row = db.get_first_row(product_sql, params["id"], params["id"])
     json_error("Produto não encontrado.", 404) unless row
     json_response(product: product_json(row))
   end
@@ -476,11 +481,12 @@ class MarketplaceApp < Sinatra::Base
     cents = (input["price"].to_f * 100).round
     json_error("O preço deve ser maior que zero.", 422) unless cents.positive?
     now = Marketplace::Database.now
-    db.execute(<<~SQL, slug, input["title"], input["description"], cents, category["id"], now, now)
+    insert_product_sql = <<~SQL
       INSERT INTO products (slug, title, description, price_cents, category_id, condition, location, shipping,
                             stock, status, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, 'Novo', 'A definir', 'A combinar', 1, 'active', ?, ?)
     SQL
+    db.execute(insert_product_sql, slug, input["title"], input["description"], cents, category["id"], now, now)
     json_response(id: db.last_insert_row_id, message: "Produto publicado.", 201)
   rescue SQLite3::ConstraintException
     json_error("Já existe um produto com esse título.", 409)
