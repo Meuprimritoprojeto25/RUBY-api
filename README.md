@@ -41,9 +41,10 @@ possible to use the service without an API client:
 Form writes use the same Active Record models and database constraints as the
 JSON API. Public preview deployments commonly use a gateway hostname that is
 not known at build time. The application keeps Rack's request protections on
-while excluding only host authorization, preventing those valid dashboard
-links and redirects from being rejected with `403 Forbidden` by an internal
-hostname allowlist.
+while excluding only host authorization. Sinatra's implicit protection stack
+is disabled so it cannot add a second host allowlist; the explicitly
+configured stack prevents valid dashboard links and redirects from being
+rejected with `403 Forbidden` by that internal hostname allowlist.
 
 Useful environment variables:
 

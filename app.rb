@@ -9,15 +9,23 @@ class DashboardiaApp < Sinatra::Base
     set :environment, ENV.fetch("RACK_ENV", "development").to_sym
     set :show_exceptions, false
     set :raise_errors, false
+    # Sinatra installs its own Rack::Protection middleware when this setting
+    # is enabled. Disable that implicit stack so the explicit configuration
+    # below is the only protection middleware in the request path.
+    #
+    # Without this setting, Sinatra's default HostAuthorization middleware
+    # remains active in addition to the stack configured below and rejects
+    # preview gateway hostnames with a bare 403 response.
+    set :protection, false
   end
 
   use Rack::Deflater
   # Preview environments are reached through a gateway whose hostname is not
   # known when the image is built. Keep Rack's request protections enabled,
   # but let the gateway's valid public Host header reach the application.
-  # Without this exception, Rack::Protection::HostAuthorization responds with
-  # 403 before Sinatra can serve navigation routes.
-  use Rack::Protection, except: %i[path_traversal host_authorization]
+  # This is deliberately the sole Rack::Protection stack; see the explicit
+  # Sinatra configuration above.
+  use Rack::Protection, except: :host_authorization
 
   before do
     headers(
